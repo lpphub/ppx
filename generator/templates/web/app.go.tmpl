@@ -23,17 +23,20 @@ import (
 )
 
 type App struct {
-	Engine *gin.Engine
+	engine *gin.Engine
 }
 
 func New() *App {
 	app := &App{
-		Engine: gin.Default(),
+		engine: gin.Default(),
 	}
+
+	app.init()
+
 	return app
 }
 
-func (a *App) Init() {
+func (a *App) init() {
 	// 1.初始化基础设施
 	infra.Init()
 	// 2.初始化逻辑层
@@ -46,7 +49,7 @@ func (a *App) Init() {
 func (a *App) Run() {
 	srv := &http.Server{
 		Addr:    fmt.Sprintf(":%d", infra.Cfg.Server.Port),
-		Handler: a.Engine,
+		Handler: a.engine,
 	}
 	go func() {
 		log.Printf("Server starting on %s", srv.Addr)
@@ -71,7 +74,7 @@ func (a *App) Run() {
 }
 
 func (a *App) setupRouter() {
-	r := a.Engine
+	r := a.engine
 
 	// pprof and metrics
 	//monitor.StartPprof()

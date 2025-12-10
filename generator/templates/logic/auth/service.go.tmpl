@@ -1,0 +1,69 @@
+package auth
+
+import (
+	"context"
+	"errors"
+	"{{.ModuleName}}/infra/jwt"
+	"{{.ModuleName}}/logic/user"
+	"{{.ModuleName}}/web/types"
+)
+
+type Service struct {
+	userSvc *user.Service
+}
+
+func NewService(userSvc *user.Service) *Service {
+	return &Service{
+		userSvc: userSvc,
+	}
+}
+
+// Register 用户注册
+func (s *Service) Register(ctx context.Context, req types.RegisterReq) (*jwt.TokenPair, error) {
+	// 创建用户
+	userCreateReq := types.CreateUserReq{
+		Username: req.Username,
+		Email:    req.Email,
+		Password: req.Password,
+	}
+
+	createdUser, err := s.userSvc.Create(ctx, userCreateReq)
+	if err != nil {
+		return nil, err
+	}
+
+	// 生成token对
+	tokenPair, err := jwt.GenerateTokenPair(createdUser.ID)
+	if err != nil {
+		return nil, errors.New("生成token失败: " + err.Error())
+	}
+
+	return tokenPair, nil
+}
+
+// Login 用户登录
+func (s *Service) Login(ctx context.Context, req types.LoginReq) (*jwt.TokenPair, error) {
+	// 验证用户凭据
+	loginUser, err := s.userSvc.ValidateLogin(ctx, req.Username, req.Password)
+	if err != nil {
+		return nil, err
+	}
+
+	// 生成token对
+	tokenPair, err := jwt.GenerateTokenPair(loginUser.ID)
+	if err != nil {
+		return nil, errors.New("生成token失败: " + err.Error())
+	}
+
+	return tokenPair, nil
+}
+
+// RefreshToken 刷新token
+func (s *Service) RefreshToken(_ context.Context, refreshToken string) (*jwt.TokenPair, error) {
+	tokenPair, err := jwt.RefreshToken(refreshToken)
+	if err != nil {
+		return nil, errors.New("刷新token失败: " + err.Error())
+	}
+
+	return tokenPair, nil
+}

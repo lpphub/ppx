@@ -30,10 +30,20 @@ func CreateProject(projectName string) error {
 		"infra/dbs",
 		"infra/jwt",
 		"infra/logger",
+		"infra/logger/logx",
 		"infra/monitor",
 		"logic",
+		"logic/auth",
+		"logic/user",
+		"logic/shared",
+		"web/base",
 		"web/handlers",
 		"web/middleware",
+		"web/rest",
+		"web/rest/permission",
+		"web/rest/role",
+		"web/rest/user",
+		"web/types",
 		"config",
 	}
 
@@ -60,35 +70,41 @@ func CreateProject(projectName string) error {
 }
 
 func processTemplates(projectName string, data TemplateData) error {
-	// Process main.go template
-	if err := processTemplate(
-		"templates/cmd/run.go.tmpl",
-		filepath.Join(projectName, "main.go"),
-		data,
-	); err != nil {
-		return fmt.Errorf("failed to process main.go template: %w", err)
+	// All templates mapping
+	templates := map[string]string{
+		"templates/main.go.tmpl":                    "main.go",
+		"templates/web/app.go.tmpl":                 "web/app.go",
+		"templates/web/base/render.go.tmpl":         "web/base/render.go",
+		"templates/web/middleware/auth.go.tmpl":     "web/middleware/auth.go",
+		"templates/web/rest/handler.go.tmpl":        "web/rest/handler.go",
+		"templates/web/types/req.go.tmpl":           "web/types/req.go",
+		"templates/web/types/resp.go.tmpl":          "web/types/resp.go",
+		"templates/infra/config/config.go.tmpl":     "infra/config/config.go",
+		"templates/infra/dbs/db.go.tmpl":            "infra/dbs/db.go",
+		"templates/infra/jwt/jwt.go.tmpl":           "infra/jwt/jwt.go",
+		"templates/infra/logger/logger.go.tmpl":     "infra/logger/logger.go",
+		"templates/infra/logger/global.go.tmpl":     "infra/logger/global.go",
+		"templates/infra/logger/extractor.go.tmpl":  "infra/logger/extractor.go",
+		"templates/infra/logger/zerolog.go.tmpl":    "infra/logger/zerolog.go",
+		"templates/infra/logger/logx/gin.go.tmpl":   "infra/logger/logx/gin.go",
+		"templates/infra/logger/logx/gorm.go.tmpl":  "infra/logger/logx/gorm.go",
+		"templates/infra/logger/logx/redis.go.tmpl": "infra/logger/logx/redis.go",
+		"templates/infra/monitor/metrics.go.tmpl":   "infra/monitor/metrics.go",
+		"templates/infra/monitor/pprof.go.tmpl":     "infra/monitor/pprof.go",
+		"templates/infra/init.go.tmpl":              "infra/init.go",
+		"templates/logic/auth/service.go.tmpl":      "logic/auth/service.go",
+		"templates/logic/user/service.go.tmpl":      "logic/user/service.go",
+		"templates/logic/user/model.go.tmpl":        "logic/user/model.go",
+		"templates/logic/shared/consts.go.tmpl":     "logic/shared/consts.go",
+		"templates/logic/shared/errors.go.tmpl":     "logic/shared/errors.go",
+		"templates/logic/shared/pagination.go.tmpl": "logic/shared/pagination.go",
+		"templates/config/config.yml.tmpl":          "config/config.yml",
+		"templates/go.mod.tmpl":                     "go.mod",
+		"templates/Dockerfile.tmpl":                 "Dockerfile",
 	}
 
-	// Process web/app.go template
-	if err := processTemplate(
-		"templates/web/app.go.tmpl",
-		filepath.Join(projectName, "web", "app.go"),
-		data,
-	); err != nil {
-		return fmt.Errorf("failed to process web/app.go template: %w", err)
-	}
-
-	// Process infra templates
-	infraTemplates := map[string]string{
-		"templates/infra/config/config.go.tmpl":   "infra/config/config.go",
-		"templates/infra/dbs/db.go.tmpl":          "infra/dbs/db.go",
-		"templates/infra/jwt/jwt.go.tmpl":         "infra/jwt/jwt.go",
-		"templates/infra/logger/logx.go.tmpl":     "infra/logger/logx.go",
-		"templates/infra/monitor/monitor.go.tmpl": "infra/monitor/monitor.go",
-		"templates/infra/init.go.tmpl":            "infra/init.go",
-	}
-
-	for templatePath, outputPath := range infraTemplates {
+	// Process all templates
+	for templatePath, outputPath := range templates {
 		if err := processTemplate(
 			templatePath,
 			filepath.Join(projectName, outputPath),
@@ -96,15 +112,6 @@ func processTemplates(projectName string, data TemplateData) error {
 		); err != nil {
 			return fmt.Errorf("failed to process template %s: %w", templatePath, err)
 		}
-	}
-
-	// Process config/config.yml template
-	if err := processTemplate(
-		"templates/config/config.yml.tmpl",
-		filepath.Join(projectName, "config", "config.yml"),
-		data,
-	); err != nil {
-		return fmt.Errorf("failed to process config/config.yml template: %w", err)
 	}
 
 	return nil

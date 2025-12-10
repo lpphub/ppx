@@ -1,27 +1,49 @@
 package infra
 
 import (
+	"fmt"
 	"{{.ModuleName}}/infra/config"
 	"{{.ModuleName}}/infra/dbs"
-	"{{.ModuleName}}/infra/jwt"
-	"{{.ModuleName}}/infra/logger/logx"
-	"{{.ModuleName}}/infra/monitor"
+	"{{.ModuleName}}/infra/logger"
+
+	"github.com/redis/go-redis/v9"
+	"gorm.io/gorm"
+)
+
+var (
+	Cfg *config.Config
+	DB  *gorm.DB
+	RDB *redis.Client
 )
 
 func Init() {
-	// 1. Initialize logger
-	logx.Init()
-	
-	// 2. Load configuration
-	config.Init()
-	
-	// 3. Initialize database
-	dbs.Init()
-	
-	// 4. Initialize monitor
-	monitor.Init()
-	
-	// JWT doesn't need initialization, just config
-	
-	logx.Info("Infrastructure initialized successfully")
+	var err error
+	// 1.加载配置
+	Cfg, err = config.Load()
+	if err != nil {
+		panic(fmt.Sprintf("Failed to load config: %v", err))
+	}
+
+	// 2.配置日志
+	logger.Init()
+
+	// 3.初始化数据库和Redis
+	DB, err = dbs.NewMysqlDB(Cfg.Database)
+	if err != nil {
+		panic(fmt.Sprintf("Failed to connect to database: %v", err))
+	}
+
+	RDB, err = dbs.NewRedis(Cfg.Redis)
+	if err != nil {
+		panic(fmt.Sprintf("Failed to connect to redis: %v", err))
+	}
+
+}
+
+func ProvideDB() *gorm.DB {
+	return DB
+}
+
+func ProvideRDB() *redis.Client {
+	return RDB
 }
