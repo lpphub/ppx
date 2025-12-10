@@ -1,0 +1,27 @@
+package infra
+
+import (
+	"{{.ModuleName}}/infra/config"
+	"{{.ModuleName}}/infra/dbs"
+	"{{.ModuleName}}/infra/jwt"
+	"{{.ModuleName}}/infra/logger/logx"
+	"{{.ModuleName}}/infra/monitor"
+)
+
+func Init() {
+	// 1. Initialize logger
+	logx.Init()
+	
+	// 2. Load configuration
+	config.Init()
+	
+	// 3. Initialize database
+	dbs.Init()
+	
+	// 4. Initialize monitor
+	monitor.Init()
+	
+	// JWT doesn't need initialization, just config
+	
+	logx.Info("Infrastructure initialized successfully")
+}

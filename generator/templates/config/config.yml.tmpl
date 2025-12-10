@@ -1,0 +1,21 @@
+database:
+  host: 127.0.0.1
+  port: 3306
+  dbname: app_db
+  user: test
+  password: 123456789
+
+redis:
+  host: 127.0.0.1
+  port: 6379
+  password: 123456789
+  db: 0
+
+jwt:
+  secret: your-secret
+  expire_time: 7200       # access_token 过期时间，单位：秒，默认 2 小时
+  refresh_expire_time: 604800  # refresh_token 过期时间，单位：秒，默认 7 天
+
+server:
+  port: 8080
+  mode: debug  # debug, release, testock值

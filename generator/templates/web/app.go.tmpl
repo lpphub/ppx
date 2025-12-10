@@ -1,0 +1,94 @@
+package web
+
+import (
+	"context"
+	"errors"
+	"fmt"
+	"{{.ModuleName}}/infra"
+	"{{.ModuleName}}/infra/logger/logx"
+	"{{.ModuleName}}/infra/monitor"
+	"{{.ModuleName}}/logic"
+	"{{.ModuleName}}/web/rest"
+	"{{.ModuleName}}/web/rest/permission"
+	"{{.ModuleName}}/web/rest/role"
+	"{{.ModuleName}}/web/rest/user"
+	"log"
+	"net/http"
+	"os"
+	"os/signal"
+	"syscall"
+	"time"
+
+	"github.com/gin-gonic/gin"
+)
+
+type App struct {
+	Engine *gin.Engine
+}
+
+func New() *App {
+	app := &App{
+		Engine: gin.Default(),
+	}
+	return app
+}
+
+func (a *App) Init() {
+	// 1.初始化基础设施
+	infra.Init()
+	// 2.初始化逻辑层
+	logic.Init()
+
+	// 3.配置web路由
+	a.setupRouter()
+}
+
+func (a *App) Run() {
+	srv := &http.Server{
+		Addr:    fmt.Sprintf(":%d", infra.Cfg.Server.Port),
+		Handler: a.Engine,
+	}
+	go func() {
+		log.Printf("Server starting on %s", srv.Addr)
+		if err := srv.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
+			log.Fatalf("Failed to start server: %v", err)
+		}
+	}()
+
+	quit := make(chan os.Signal, 1)
+	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
+	<-quit
+	log.Println("Shutting down server...")
+
+	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+	defer cancel()
+
+	if err := srv.Shutdown(ctx); err != nil {
+		log.Printf("Server forced to shutdown: %v", err)
+	} else {
+		log.Println("Server shutdown completed")
+	}
+}
+
+func (a *App) setupRouter() {
+	r := a.Engine
+
+	// pprof and metrics
+	//monitor.StartPprof()
+	monitor.RegisterMetrics(r)
+
+	api := r.Group("/api")
+	// 公共中间件
+	api.Use(logx.GinLogMiddleware())
+
+	// 公共路由
+	api.GET("/test", rest.Test)
+	api.POST("/register", rest.Register)
+	api.POST("/login", rest.Login)
+	api.POST("/refresh", rest.RefreshToken)
+
+	// 注册接口处理
+	user.Register(api)
+	role.Register(api)
+	permission.Register(api)
+}
