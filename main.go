@@ -1,7 +1,7 @@
 package main
 
-import "ppx/cmd"
+import "fmt"
 
 func main() {
-	cmd.Execute()
+	fmt.Println("Hello World")
 }
