@@ -9,8 +9,8 @@ import (
 )
 
 type (
-	Claims    jwt.Claims
-	TokenPair jwt.TokenPair
+	Claims    = jwt.Claims
+    TokenPair = jwt.TokenPair
 )
 
 var (
@@ -40,7 +40,7 @@ func ParseAccessToken(tokenString string) (*Claims, error) {
 		return nil, fmt.Errorf("invalid token type")
 	}
 
-	return (*Claims)(claims), nil
+	return claims, nil
 }
 
 // GenerateTokenPair 生成 access_token 和 refresh_token
@@ -49,7 +49,7 @@ func GenerateTokenPair(userID uint) (*TokenPair, error) {
 	if err != nil {
 		return nil, err
 	}
-	return (*TokenPair)(token), nil
+	return token, nil
 }
 
 // RefreshToken 使用 refresh_token 刷新 token 对
@@ -58,5 +58,5 @@ func RefreshToken(refreshToken string) (*TokenPair, error) {
 	if err != nil {
 		return nil, err
 	}
-	return (*TokenPair)(token), nil
+	return token, nil
 }
