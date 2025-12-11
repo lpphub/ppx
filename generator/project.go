@@ -26,19 +26,16 @@ func CreateProject(projectName, moduleName string) error {
 	// 创建进度条
 	bar := progressbar.NewOptions64(
 		100,
-		progressbar.OptionSetDescription("Creating project..."),
+		progressbar.OptionSetDescription("正在创建项目..."),
 		progressbar.OptionSetWriter(os.Stderr),
-		progressbar.OptionShowCount(),
-		progressbar.OptionShowIts(),
-		progressbar.OptionSetItsString("files"),
 		progressbar.OptionThrottle(100*time.Millisecond),
 		progressbar.OptionOnCompletion(func() {
-			color.Green("✓ Project created successfully!")
+			color.Green("✓ 项目创建成功！")
 		}),
 	)
 
 	// 步骤1: 创建项目根目录
-	color.Cyan("📁 Creating directory structure...")
+	color.Cyan("📁 创建目录结构...")
 	if err := os.MkdirAll(projectName, 0755); err != nil {
 		return fmt.Errorf("failed to create project directory: %w", err)
 	}
@@ -60,7 +57,7 @@ func CreateProject(projectName, moduleName string) error {
 	}
 
 	// 步骤3: 处理模板
-	color.Cyan("📝 Processing templates...")
+	color.Cyan("📝 处理模板文件...")
 	if err := processTemplates(projectName, templateData, bar); err != nil {
 		return fmt.Errorf("failed to process templates: %w", err)
 	}
@@ -73,19 +70,17 @@ func CreateProject(projectName, moduleName string) error {
 }
 
 func printNextSteps(projectName string) {
-	color.Green("\n🎉 Project '%s' created successfully!", projectName)
-	color.Cyan("\n📋 Next steps:")
+	color.Green("\n🎉 项目 '%s' 创建成功！", projectName)
+	color.Cyan("\n📋 接下来的步骤:")
 	fmt.Printf("   1. cd %s\n", projectName)
-	fmt.Printf("   2. Update config/config.yml with your database settings\n")
-	fmt.Printf("   3. go mod download\n")
-	fmt.Printf("   4. wire ./logic  # Generate dependency injection code\n")
+	fmt.Printf("   2. 更新 config/config.yml 中的配置\n")
+	fmt.Printf("   3. go mod tidy\n")
+	fmt.Printf("   4. wire ./logic  # 生成依赖注入代码\n")
 	fmt.Printf("   5. go run .\n")
 
-	color.Yellow("\n⚠ Don't forget to:")
-	fmt.Printf("   - Update database credentials in config/config.yml\n")
-	fmt.Printf("   - Change JWT secret in config/config.yml\n")
-	fmt.Printf("   - Start Redis server if needed\n")
-	fmt.Printf("   - Install wire if not available: go install github.com/google/wire/cmd/wire@latest\n")
+	color.Yellow("\n⚠ 不要忘记:")
+	fmt.Printf("   - 更新 config/config.yml 中的配置（DB、Redis、JWT）\n")
+	fmt.Printf("   - 如果没有安装 wire: go install github.com/google/wire/cmd/wire@latest\n")
 }
 
 // createDirectories creates the required directory structure for the project
@@ -144,32 +139,8 @@ func processTemplates(projectName string, data TemplateData, bar *progressbar.Pr
 
 	// Process all templates
 	templateCount := len(templates)
-	for i, templatePath := range []string{
-		"templates/go.mod.tmpl",
-		"templates/Dockerfile.tmpl",
-		"templates/main.go.tmpl",
-		"templates/config/config.yml.tmpl",
-		"templates/infra/init.go.tmpl",
-		"templates/infra/config.go.tmpl",
-		"templates/infra/db.go.tmpl",
-		"templates/infra/jwt/jwt.go.tmpl",
-		"templates/logic/auth/service.go.tmpl",
-		"templates/logic/user/service.go.tmpl",
-		"templates/logic/user/model.go.tmpl",
-		"templates/logic/shared/consts.go.tmpl",
-		"templates/logic/shared/errors.go.tmpl",
-		"templates/logic/shared/pagination.go.tmpl",
-		"templates/logic/init.go.tmpl",
-		"templates/logic/wire.go.tmpl",
-		"templates/web/app.go.tmpl",
-		"templates/web/middleware/auth.go.tmpl",
-		"templates/web/rest/handler.go.tmpl",
-		"templates/web/rest/user/handler.go.tmpl",
-		"templates/web/rest/user/route.go.tmpl",
-		"templates/web/types/req.go.tmpl",
-		"templates/web/types/resp.go.tmpl",
-	} {
-		outputPath := templates[templatePath]
+	i := 0
+	for templatePath, outputPath := range templates {
 		if err := processTemplate(
 			templatePath,
 			filepath.Join(projectName, outputPath),
@@ -181,6 +152,7 @@ func processTemplates(projectName string, data TemplateData, bar *progressbar.Pr
 		// 更新进度条
 		progress := int(float64(i+1) / float64(templateCount) * 70)
 		_ = bar.Set(progress)
+		i++
 	}
 
 	return nil

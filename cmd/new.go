@@ -54,15 +54,15 @@ func runNew(cmd *cobra.Command, args []string) {
 
 	// 验证项目名称
 	if err := validateProjectName(projectName); err != nil {
-		color.Red("❌ Invalid project name: %v", err)
-		color.Yellow("💡 Project name should only contain letters, numbers, and hyphens")
+		color.Red("❌ 无效的项目名称: %v", err)
+		color.Yellow("💡 项目名称只能包含字母、数字、连字符和下划线")
 		os.Exit(1)
 	}
 
 	// 检查目录是否已存在
 	if _, err := os.Stat(projectName); err == nil {
-		color.Red("❌ Directory '%s' already exists", projectName)
-		color.Yellow("💡 Choose a different name or remove the existing directory")
+		color.Red("❌ 目录 '%s' 已存在", projectName)
+		color.Yellow("💡 请选择不同的名称或删除现有目录")
 		os.Exit(1)
 	}
 
@@ -78,35 +78,35 @@ func runNew(cmd *cobra.Command, args []string) {
 }
 
 func handleCreateError(err error, projectName string) {
-	color.Red("❌ Failed to create project '%s'", projectName)
+	color.Red("❌ 创建项目 '%s' 失败", projectName)
 
 	switch {
 	case strings.Contains(err.Error(), "permission denied"):
-		color.Yellow("💡 Try running with different permissions or choose a different directory")
+		color.Yellow("💡 请尝试使用不同的权限或选择其他目录")
 	case strings.Contains(err.Error(), "template"):
-		color.Yellow("💡 This might be a bug in the template. Please report this issue.")
+		color.Yellow("💡 这可能是模板中的错误，请报告此问题。")
 	case strings.Contains(err.Error(), "disk space"):
-		color.Yellow("💡 Check available disk space")
+		color.Yellow("💡 请检查可用磁盘空间")
 	default:
-		color.Yellow("💡 Error details: %v", err)
+		color.Yellow("💡 错误详情: %v", err)
 	}
 
-	color.Cyan("📞 Need help? Visit: https://github.com/lpphub/ppx/issues")
+	color.Cyan("📞 需要帮助？访问: https://github.com/lpphub/ppx/issues")
 }
 
 func validateProjectName(name string) error {
 	if len(name) == 0 {
-		return fmt.Errorf("project name cannot be empty")
+		return fmt.Errorf("项目名称不能为空")
 	}
 	if len(name) > 50 {
-		return fmt.Errorf("project name too long (max 50 characters)")
+		return fmt.Errorf("项目名称过长（最多50个字符）")
 	}
 	if !regexp.MustCompile(`^[a-zA-Z][a-zA-Z0-9-_]*$`).MatchString(name) {
-		return fmt.Errorf("project name must start with letter and contain only letters, numbers, hyphens, and underscores")
+		return fmt.Errorf("项目名称必须以字母开头，且只能包含字母、数字、连字符和下划线")
 	}
 	return nil
 }
 
 func init() {
-	newCmd.Flags().String("module", "", "Module name for the project (e.g., github.com/user/project)")
+	newCmd.Flags().String("module", "", "项目的模块名（例如：github.com/user/project）")
 }
