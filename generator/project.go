@@ -114,6 +114,8 @@ func processTemplates(projectName string, data TemplateData, bar *progressbar.Pr
 	templates := map[string]string{
 		"templates/go.mod.tmpl":                     "go.mod",
 		"templates/Dockerfile.tmpl":                 "Dockerfile",
+		"templates/.gitignore.tmpl":                 ".gitignore",
+		"templates/.dockerignore.tmpl":              ".dockerignore",
 		"templates/main.go.tmpl":                    "main.go",
 		"templates/config/config.yml.tmpl":          "config/config.yml",
 		"templates/infra/init.go.tmpl":              "infra/init.go",
