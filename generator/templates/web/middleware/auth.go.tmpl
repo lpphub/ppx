@@ -3,10 +3,10 @@ package middleware
 import (
 	"{{.ModuleName}}/infra/jwt"
 	"{{.ModuleName}}/logic/shared"
-	"{{.ModuleName}}/web/base"
 	"strings"
 
 	"github.com/gin-gonic/gin"
+	"github.com/lpphub/goweb/base"
 )
 
 const (
@@ -15,8 +15,8 @@ const (
 	UserIDKey           = "user_id"
 )
 
-// TokenAuth JWT-Token 认证中间件
-func TokenAuth() gin.HandlerFunc {
+// JwtAuth JWT-Token 认证中间件
+func JwtAuth() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		// 从 Header 中获取 token
 		authHeader := c.GetHeader(AuthorizationHeader)
@@ -39,14 +39,8 @@ func TokenAuth() gin.HandlerFunc {
 		}
 
 		// 解析 token
-		claims, err := jwt.ParseToken(tokenString)
+		claims, err := jwt.ParseAccessToken(tokenString)
 		if err != nil {
-			base.FailWithError(c, shared.ErrInvalidToken)
-			return
-		}
-
-		// 验证是否为 access token
-		if claims.Type != jwt.AccessTokenType {
 			base.FailWithError(c, shared.ErrInvalidToken)
 			return
 		}

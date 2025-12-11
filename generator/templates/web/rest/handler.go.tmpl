@@ -1,13 +1,13 @@
 package rest
 
 import (
-	"{{.ModuleName}}/infra/logger"
 	"{{.ModuleName}}/logic"
 	"{{.ModuleName}}/logic/shared"
-	"{{.ModuleName}}/web/base"
 	"{{.ModuleName}}/web/types"
 
 	"github.com/gin-gonic/gin"
+	"github.com/lpphub/goweb/base"
+	"github.com/lpphub/goweb/ext/logger"
 )
 
 func Test(c *gin.Context) {

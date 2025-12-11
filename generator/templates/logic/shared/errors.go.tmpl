@@ -1,37 +1,23 @@
 package shared
 
+import "github.com/lpphub/goweb/base"
+
 var (
 	// 系统错误
-	ErrServerError = NewError(500, "server internal error")
+	ErrServerError = base.NewError(500, "server internal error")
 
 	// 通用错误
-	ErrNoToken        = NewError(1000, "no token")
-	ErrInvalidToken   = NewError(1001, "invalid token")
-	ErrInvalidParam   = NewError(1100, "参数错误")
-	ErrRecordNotFound = NewError(1101, "数据不存在")
+	ErrNoToken        = base.NewError(1000, "no token")
+	ErrInvalidToken   = base.NewError(1001, "invalid token")
+	ErrInvalidParam   = base.NewError(1100, "参数错误")
+	ErrRecordNotFound = base.NewError(1101, "数据不存在")
 
 	// 业务错误
-	ErrUserExists       = NewError(2101, "用户已存在")
-	ErrEmailExists      = NewError(2102, "邮箱已存在")
-	ErrInvalidPassword  = NewError(2103, "密码格式错误")
-	ErrLoginFailed      = NewError(2104, "用户名或密码错误")
-	ErrUserDisabled     = NewError(2105, "用户已禁用")
-	ErrRoleExists       = NewError(2110, "角色已存在")
-	ErrPermissionExists = NewError(2120, "权限已存在")
+	ErrUserExists       = base.NewError(2101, "用户已存在")
+	ErrEmailExists      = base.NewError(2102, "邮箱已存在")
+	ErrInvalidPassword  = base.NewError(2103, "密码格式错误")
+	ErrLoginFailed      = base.NewError(2104, "用户名或密码错误")
+	ErrUserDisabled     = base.NewError(2105, "用户已禁用")
+	ErrRoleExists       = base.NewError(2110, "角色已存在")
+	ErrPermissionExists = base.NewError(2120, "权限已存在")
 )
-
-type Error struct {
-	Code int
-	Msg  string
-}
-
-func NewError(code int, msg string) Error {
-	return Error{
-		Code: code,
-		Msg:  msg,
-	}
-}
-
-func (err Error) Error() string {
-	return err.Msg
-}
