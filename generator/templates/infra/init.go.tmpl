@@ -3,7 +3,7 @@ package infra
 import (
 	"fmt"
 
-	"github.com/lpphub/goweb/ext/logger"
+	"github.com/lpphub/goweb/pkg/logger"
 	"github.com/redis/go-redis/v9"
 	"gorm.io/gorm"
 )

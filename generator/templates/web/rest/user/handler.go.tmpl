@@ -8,7 +8,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/lpphub/goweb/base"
-	"github.com/lpphub/goweb/ext/logger"
+	"github.com/lpphub/goweb/pkg/logger"
 )
 
 // List 获取用户列表
