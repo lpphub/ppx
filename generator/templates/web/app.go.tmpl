@@ -4,16 +4,16 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"{{.ModuleName}}/infra"
-	"{{.ModuleName}}/logic"
-	"{{.ModuleName}}/web/rest"
-	"{{.ModuleName}}/web/rest/user"
 	"log"
 	"net/http"
 	"os"
 	"os/signal"
 	"syscall"
 	"time"
+
+	"{{.ModuleName}}/infra"
+	"{{.ModuleName}}/logic"
+	"{{.ModuleName}}/web/rest/handlers"
 
 	"github.com/gin-gonic/gin"
 	"github.com/lpphub/goweb/ext/logx"
@@ -26,11 +26,10 @@ type App struct {
 
 func New() *App {
 	app := &App{
-		engine: gin.Default(),
+		engine: gin.New(),
 	}
 
 	app.init()
-
 	return app
 }
 
@@ -47,22 +46,15 @@ func (a *App) init() {
 func (a *App) setupRouter() {
 	r := a.engine
 
-	// pprof and metrics
-	//monitor.StartPprof()
+	// 全局中间件
+	r.Use(gin.Recovery())
+	r.Use(logx.GinAccessLog(logx.WithSkipPaths("/metrics", "/health")))
+
+	// metrics
 	monitor.RegisterMetrics(r)
 
-	api := r.Group("/api")
-	// 公共中间件
-	api.Use(logx.GinLogMiddleware())
-
-	// 公共路由
-	api.GET("/test", rest.Test)
-	api.POST("/register", rest.Register)
-	api.POST("/login", rest.Login)
-	api.POST("/refresh", rest.RefreshToken)
-
-	// 注册接口处理
-	user.Register(api)
+	// 注册所有接口路由
+	handlers.RegisterRoutes(r)
 }
 
 func (a *App) Run() {

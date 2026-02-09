@@ -12,7 +12,7 @@ import (
 	"github.com/schollz/progressbar/v3"
 )
 
-//go:embed templates/*
+//go:embed templates/**
 var templateFS embed.FS
 
 // TemplateData holds the data for template rendering
@@ -90,11 +90,13 @@ func createDirectories(projectName string) error {
 		"infra/jwt",
 		"logic/auth",
 		"logic/user",
-		"logic/shared",
+		"logic/dto",
+		"pkg/consts",
+		"pkg/errs",
+		"pkg/strutils",
 		"web/middleware",
-		"web/rest",
-		"web/rest/user",
-		"web/types",
+		"web/rest/handlers",
+		"web/rest/helper",
 		"config",
 	}
 
@@ -112,31 +114,34 @@ func createDirectories(projectName string) error {
 func processTemplates(projectName string, data TemplateData, bar *progressbar.ProgressBar) error {
 	// All templates mapping
 	templates := map[string]string{
-		"templates/go.mod.tmpl":                     "go.mod",
-		"templates/Dockerfile.tmpl":                 "Dockerfile",
-		"templates/.gitignore.tmpl":                 ".gitignore",
-		"templates/.dockerignore.tmpl":              ".dockerignore",
-		"templates/main.go.tmpl":                    "main.go",
-		"templates/config/config.yml.tmpl":          "config/config.yml",
-		"templates/infra/init.go.tmpl":              "infra/init.go",
-		"templates/infra/config.go.tmpl":            "infra/config.go",
-		"templates/infra/db.go.tmpl":                "infra/db.go",
-		"templates/infra/jwt/jwt.go.tmpl":           "infra/jwt/jwt.go",
-		"templates/logic/auth/service.go.tmpl":      "logic/auth/service.go",
-		"templates/logic/user/service.go.tmpl":      "logic/user/service.go",
-		"templates/logic/user/model.go.tmpl":        "logic/user/model.go",
-		"templates/logic/shared/consts.go.tmpl":     "logic/shared/consts.go",
-		"templates/logic/shared/errors.go.tmpl":     "logic/shared/errors.go",
-		"templates/logic/shared/pagination.go.tmpl": "logic/shared/pagination.go",
-		"templates/logic/init.go.tmpl":              "logic/init.go",
-		"templates/logic/wire.go.tmpl":              "logic/wire.go",
-		"templates/web/app.go.tmpl":                 "web/app.go",
-		"templates/web/middleware/auth.go.tmpl":     "web/middleware/auth.go",
-		"templates/web/rest/handler.go.tmpl":        "web/rest/handler.go",
-		"templates/web/rest/user/handler.go.tmpl":   "web/rest/user/handler.go",
-		"templates/web/rest/user/route.go.tmpl":     "web/rest/user/route.go",
-		"templates/web/types/req.go.tmpl":           "web/types/req.go",
-		"templates/web/types/resp.go.tmpl":          "web/types/resp.go",
+		"templates/go.mod.tmpl":                      "go.mod",
+		"templates/Dockerfile.tmpl":                  "Dockerfile",
+		"templates/.gitignore.tmpl":                  ".gitignore",
+		"templates/.env.tmpl":                        ".env",
+		"templates/Makefile.tmpl":                    "Makefile",
+		"templates/main.go.tmpl":                     "main.go",
+		"templates/config/config.yml.tmpl":           "config/config.yml",
+		"templates/infra/init.go.tmpl":               "infra/init.go",
+		"templates/infra/config.go.tmpl":             "infra/config.go",
+		"templates/infra/dbs.go.tmpl":                "infra/dbs.go",
+		"templates/infra/jwt/jwt.go.tmpl":            "infra/jwt/jwt.go",
+		"templates/logic/auth/service.go.tmpl":       "logic/auth/service.go",
+		"templates/logic/user/model.go.tmpl":         "logic/user/model.go",
+		"templates/logic/user/repository.go.tmpl":    "logic/user/repository.go",
+		"templates/logic/user/service.go.tmpl":       "logic/user/service.go",
+		"templates/logic/dto/auth.go.tmpl":           "logic/dto/auth.go",
+		"templates/logic/dto/user.go.tmpl":           "logic/dto/user.go",
+		"templates/logic/init.go.tmpl":               "logic/init.go",
+		"templates/logic/wire.go.tmpl":               "logic/wire.go",
+		"templates/pkg/consts/constants.go.tmpl":     "pkg/consts/constants.go",
+		"templates/pkg/errs/errors.go.tmpl":          "pkg/errs/errors.go",
+		"templates/pkg/strutils/string.go.tmpl":      "pkg/strutils/string.go",
+		"templates/web/app.go.tmpl":                  "web/app.go",
+		"templates/web/middleware/auth.go.tmpl":      "web/middleware/auth.go",
+		"templates/web/middleware/cors.go.tmpl":      "web/middleware/cors.go",
+		"templates/web/rest/handlers/auth.go.tmpl":   "web/rest/handlers/auth.go",
+		"templates/web/rest/handlers/routes.go.tmpl": "web/rest/handlers/routes.go",
+		"templates/web/rest/helper/handler.go.tmpl":  "web/rest/helper/handler.go",
 	}
 
 	// Process all templates

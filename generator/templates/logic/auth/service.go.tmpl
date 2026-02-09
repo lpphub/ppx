@@ -2,10 +2,11 @@ package auth
 
 import (
 	"context"
-	"errors"
 	"{{.ModuleName}}/infra/jwt"
+	"{{.ModuleName}}/logic/dto"
 	"{{.ModuleName}}/logic/user"
-	"{{.ModuleName}}/web/types"
+
+	"github.com/jinzhu/copier"
 )
 
 type Service struct {
@@ -18,52 +19,60 @@ func NewService(userSvc *user.Service) *Service {
 	}
 }
 
-// Register 用户注册
-func (s *Service) Register(ctx context.Context, req types.RegisterReq) (*jwt.TokenPair, error) {
-	// 创建用户
-	userCreateReq := types.CreateUserReq{
-		Username: req.Username,
+func (s *Service) Register(ctx context.Context, req dto.AuthReq) (*dto.AuthResp, error) {
+	userReq := dto.CreateUserReq{
 		Email:    req.Email,
 		Password: req.Password,
 	}
-
-	createdUser, err := s.userSvc.Create(ctx, userCreateReq)
+	newUser, err := s.userSvc.Create(ctx, userReq)
 	if err != nil {
 		return nil, err
 	}
 
-	// 生成token对
-	tokenPair, err := jwt.GenerateTokenPair(createdUser.ID)
+	tokenPair, err := jwt.GenerateTokenPair(newUser.ID)
 	if err != nil {
-		return nil, errors.New("生成token失败: " + err.Error())
+		return nil, err
 	}
 
-	return tokenPair, nil
+	var authUser dto.AuthUser
+	_ = copier.Copy(&authUser, newUser)
+
+	return &dto.AuthResp{
+		User:         &authUser,
+		AccessToken:  tokenPair.AccessToken,
+		RefreshToken: tokenPair.RefreshToken,
+	}, nil
 }
 
-// Login 用户登录
-func (s *Service) Login(ctx context.Context, req types.LoginReq) (*jwt.TokenPair, error) {
-	// 验证用户凭据
-	loginUser, err := s.userSvc.ValidateLogin(ctx, req.Username, req.Password)
+func (s *Service) Login(ctx context.Context, req dto.AuthReq) (*dto.AuthResp, error) {
+	loginUser, err := s.userSvc.ValidateLogin(ctx, req.Email, req.Password)
 	if err != nil {
 		return nil, err
 	}
 
-	// 生成token对
 	tokenPair, err := jwt.GenerateTokenPair(loginUser.ID)
 	if err != nil {
-		return nil, errors.New("生成token失败: " + err.Error())
+		return nil, err
 	}
 
-	return tokenPair, nil
+	var authUser dto.AuthUser
+	_ = copier.Copy(&authUser, loginUser)
+
+	return &dto.AuthResp{
+		User:         &authUser,
+		AccessToken:  tokenPair.AccessToken,
+		RefreshToken: tokenPair.RefreshToken,
+	}, nil
 }
 
-// RefreshToken 刷新token
-func (s *Service) RefreshToken(_ context.Context, refreshToken string) (*jwt.TokenPair, error) {
+func (s *Service) RefreshToken(_ context.Context, refreshToken string) (*dto.AuthResp, error) {
 	tokenPair, err := jwt.RefreshToken(refreshToken)
 	if err != nil {
-		return nil, errors.New("刷新token失败: " + err.Error())
+		return nil, err
 	}
 
-	return tokenPair, nil
+	return &dto.AuthResp{
+		AccessToken:  tokenPair.AccessToken,
+		RefreshToken: tokenPair.RefreshToken,
+	}, nil
 }

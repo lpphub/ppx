@@ -1,9 +1,10 @@
 package middleware
 
 import (
-	"{{.ModuleName}}/infra/jwt"
-	"{{.ModuleName}}/logic/shared"
 	"strings"
+
+	"{{.ModuleName}}/infra/jwt"
+	"{{.ModuleName}}/pkg/errs"
 
 	"github.com/gin-gonic/gin"
 	"github.com/lpphub/goweb/base"
@@ -21,27 +22,27 @@ func JwtAuth() gin.HandlerFunc {
 		// 从 Header 中获取 token
 		authHeader := c.GetHeader(AuthorizationHeader)
 		if authHeader == "" {
-			base.FailWithError(c, shared.ErrNoToken)
+			base.Fail(c, errs.ErrNoToken)
 			return
 		}
 
 		// 检查 Bearer 前缀
 		if !strings.HasPrefix(authHeader, BearerPrefix) {
-			base.FailWithError(c, shared.ErrNoToken)
+			base.Fail(c, errs.ErrNoToken)
 			return
 		}
 
 		// 提取 token
 		tokenString := strings.TrimPrefix(authHeader, BearerPrefix)
 		if tokenString == "" {
-			base.FailWithError(c, shared.ErrNoToken)
+			base.Fail(c, errs.ErrNoToken)
 			return
 		}
 
 		// 解析 token
 		claims, err := jwt.ParseAccessToken(tokenString)
 		if err != nil {
-			base.FailWithError(c, shared.ErrInvalidToken)
+			base.Fail(c, errs.ErrInvalidToken)
 			return
 		}
 

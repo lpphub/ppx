@@ -3,7 +3,7 @@ package infra
 import (
 	"fmt"
 
-	"github.com/lpphub/goweb/pkg/logger"
+	"github.com/lpphub/goweb/pkg/logging"
 	"github.com/redis/go-redis/v9"
 	"gorm.io/gorm"
 )
@@ -23,7 +23,7 @@ func Init() {
 	}
 
 	// 2.配置日志
-	logger.Init()
+	logging.Init()
 
 	// 3.初始化数据库和Redis
 	DB, err = NewMysqlDB(Cfg.Database)

@@ -27,20 +27,19 @@ Generated Project Structure:
   │   └── config.yml
   ├── infra/
   │   ├── config.go
-  │   ├── db.go
+  │   ├── dbs.go
   │   ├── init.go
   │   └── jwt/
   │       └── jwt.go
   ├── logic/
+  │   ├── dto/
   │   ├── auth/
   │   ├── user/
-  │   ├── shared/
   │   ├── init.go
   │   └── wire.go
   ├── web/
   │   ├── middleware/
   │   ├── rest/
-  │   ├── types/
   │   └── app.go
   ├── main.go
   ├── go.mod

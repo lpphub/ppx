@@ -1,0 +1,28 @@
+package dto
+
+// AuthReq 认证请求
+type AuthReq struct {
+	Email    string `json:"email" binding:"required,email"`
+	Password string `json:"password" binding:"required,min=6"`
+}
+
+// AuthResp 认证响应
+type AuthResp struct {
+	AccessToken  string    `json:"accessToken"`
+	RefreshToken string    `json:"refreshToken"`
+	User         *AuthUser `json:"user"`
+}
+
+// AuthUser 用户信息
+type AuthUser struct {
+	ID     uint   `json:"id"`
+	Name   string `json:"name"`
+	Email  string `json:"email"`
+	Avatar string `json:"avatar"`
+	Status int8   `json:"status"`
+}
+
+// RefreshTokenReq 刷新Token请求
+type RefreshTokenReq struct {
+	RefreshToken string `json:"refreshToken" binding:"required"`
+}

@@ -2,7 +2,6 @@
 // +build wireinject
 
 //go:generate wire
-
 package logic
 
 import (
@@ -13,22 +12,26 @@ import (
 	"github.com/google/wire"
 )
 
-type Service struct {
-	Auth       *auth.Service
-	User       *user.Service
+type AppService struct {
+	Auth *auth.Service
+	User *user.Service
 }
-
-var providerSet = wire.NewSet(
-	infra.ProvideDB,  // 提供DB
-	infra.ProvideRDB, // 提供Redis
-)
 
 var svcSet = wire.NewSet(
 	user.NewService,
 	auth.NewService,
 )
 
-func initialize() *Service {
-	wire.Build(providerSet, svcSet, wire.Struct(new(Service), "*"))
+var providerSet = wire.NewSet(
+	infra.ProvideDB,
+	infra.ProvideRDB,
+)
+
+var repoSet = wire.NewSet(
+	user.NewUserRepo,
+)
+
+func initialize() *AppService {
+	wire.Build(providerSet, repoSet, svcSet, wire.Struct(new(AppService), "*"))
 	return nil
 }

@@ -1,0 +1,22 @@
+package handlers
+
+import (
+	"github.com/gin-gonic/gin"
+)
+
+// RegisterRoutes 注册所有路由
+func RegisterRoutes(r *gin.Engine) {
+	// 公共路由（无需认证）
+	registerAuthRoutes(r.Group("/auth"))
+
+	// API 路由（需要认证）
+	// authApi := r.Group("/", middleware.JwtAuth())
+	// 在这里注册需要认证的路由
+}
+
+// registerAuthRoutes 注册认证路由
+func registerAuthRoutes(r *gin.RouterGroup) {
+	r.POST("/signup", AuthRegister)
+	r.POST("/signin", AuthLogin)
+	r.PUT("/refresh", AuthRefreshToken)
+}
