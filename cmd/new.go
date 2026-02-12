@@ -37,9 +37,9 @@ Generated Project Structure:
   │   ├── user/
   │   ├── init.go
   │   └── wire.go
-  ├── web/
+  ├── server/
   │   ├── middleware/
-  │   ├── rest/
+  │   ├── http/
   │   └── app.go
   ├── main.go
   ├── go.mod
