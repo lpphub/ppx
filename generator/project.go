@@ -195,15 +195,5 @@ func printSuccess(projectName string) {
 	fmt.Printf("   - Update config/config.yml (Database, Redis, JWT settings)\n")
 	fmt.Printf("   - Default server port: 8080\n")
 
-	color.Cyan("\n📚 API Endpoints (after running):")
-	fmt.Printf("   POST   /auth/register    - Register new user\n")
-	fmt.Printf("   POST   /auth/login       - Login user\n")
-	fmt.Printf("   POST   /auth/refresh     - Refresh token\n")
-	fmt.Printf("   GET    /posts            - List posts\n")
-	fmt.Printf("   POST   /posts            - Create post (requires auth)\n")
-	fmt.Printf("   GET    /posts/:id        - Get post\n")
-	fmt.Printf("   PUT    /posts/:id        - Update post (requires auth)\n")
-	fmt.Printf("   DELETE /posts/:id        - Delete post (requires auth)\n")
-
 	color.Cyan("\n📚 Documentation: https://github.com/lpphub/ppx\n")
 }
