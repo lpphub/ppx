@@ -14,7 +14,7 @@ type Module struct {
 	handler *Handler
 }
 
-func Init(userSvc contract.UserBiz) *Module {
+func New(userSvc contract.UserBiz) *Module {
 	svc := NewService(userSvc)
 	h := NewHandler(svc)
 

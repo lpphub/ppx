@@ -63,9 +63,9 @@ func (a *App) setupRouter() {
 }
 
 func (a *App) initModules() []mod.Module {
-	userMod := user.Init(infra.DB)
-	authMod := auth.Init(userMod.Service)
-	postMod := post.Init(infra.DB)
+	userMod := user.New(infra.DB)
+	authMod := auth.New(userMod.Service)
+	postMod := post.New(infra.DB)
 
 	return []mod.Module{userMod, authMod, postMod}
 }

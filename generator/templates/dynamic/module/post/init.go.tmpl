@@ -14,7 +14,7 @@ type Module struct {
 	handler *Handler
 }
 
-func Init(db *gorm.DB) *Module {
+func New(db *gorm.DB) *Module {
 	repo := NewRepository(db)
 	svc := NewService(repo)
 	h := NewHandler(svc)
