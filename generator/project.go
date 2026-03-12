@@ -90,6 +90,7 @@ func processTemplates(projectName string, data TemplateData, bar *progressbar.Pr
 		"templates/static/Makefile.tmpl":                    "Makefile",
 		"templates/static/Dockerfile.tmpl":                  "Dockerfile",
 		"templates/static/gitignore.tmpl":                   ".gitignore",
+		"templates/static/env.example.tmpl":                 ".env.example",
 		"templates/dynamic/config/config.yml.tmpl":          "config/config.yml",
 		"templates/dynamic/contract/user.go.tmpl":           "contract/user.go",
 		"templates/dynamic/infra/init.go.tmpl":              "infra/init.go",
@@ -188,8 +189,9 @@ func printSuccess(projectName string) {
 	color.Cyan("\n📋 Next steps:")
 	fmt.Printf("   1. cd %s\n", projectName)
 	fmt.Printf("   2. Update config/config.yml with your database credentials\n")
-	fmt.Printf("   3. go mod tidy\n")
-	fmt.Printf("   4. go run .\n")
+	fmt.Printf("   3. cp .env.example .env && edit .env for local development\n")
+	fmt.Printf("   4. go mod tidy\n")
+	fmt.Printf("   5. go run .\n")
 
 	color.Yellow("\n⚠ Don't forget:")
 	fmt.Printf("   - Update config/config.yml (Database, Redis, JWT settings)\n")
