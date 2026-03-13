@@ -70,6 +70,7 @@ func createDirectories(projectName string) error {
 		"shared/consts",
 		"shared/errs",
 		"shared/mod",
+		"shared/pagination",
 		"shared/strutils",
 	}
 
@@ -121,6 +122,8 @@ func processTemplates(projectName string, data TemplateData, bar *progressbar.Pr
 		"templates/dynamic/module/post/handler.go.tmpl":     "module/post/handler.go",
 		"templates/dynamic/module/post/service.go.tmpl":     "module/post/service.go",
 		"templates/dynamic/module/post/repository.go.tmpl":  "module/post/repository.go",
+		"templates/static/shared/pagination/cursor.go.tmpl": "shared/pagination/cursor.go",
+		"templates/static/shared/pagination/offset.go.tmpl": "shared/pagination/offset.go",
 	}
 
 	templateCount := len(templates)
@@ -184,6 +187,7 @@ func printSuccess(projectName string) {
 	fmt.Printf("       ├── consts/\n")
 	fmt.Printf("       ├── errs/\n")
 	fmt.Printf("       ├── mod/\n")
+	fmt.Printf("       ├── pagination/\n")
 	fmt.Printf("       └── strutils/\n")
 
 	color.Cyan("\n📋 Next steps:")
