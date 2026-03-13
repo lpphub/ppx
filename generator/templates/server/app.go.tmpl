@@ -16,7 +16,7 @@ import (
 	"{{.ModuleName}}/module/post"
 	"{{.ModuleName}}/module/user"
 	"{{.ModuleName}}/server/middleware"
-	"{{.ModuleName}}/shared/mod"
+	"{{.ModuleName}}/server/core"
 
 	"github.com/gin-gonic/gin"
 	"github.com/lpphub/goweb/ext/logx"
@@ -58,16 +58,16 @@ func (a *App) setupRouter() {
 	})
 
 	for _, m := range a.initModules() {
-		m.RegisterRoutes(r.Group(""))
+		m.Routes(r.Group(""))
 	}
 }
 
-func (a *App) initModules() []mod.Module {
+func (a *App) initModules() []core.Module {
 	userMod := user.New(infra.DB)
 	authMod := auth.New(userMod.Service)
 	postMod := post.New(infra.DB)
 
-	return []mod.Module{userMod, authMod, postMod}
+	return []core.Module{userMod, authMod, postMod}
 }
 
 func (a *App) start() {

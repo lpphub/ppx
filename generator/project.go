@@ -65,11 +65,11 @@ func createDirectories(projectName string) error {
 		"module/auth",
 		"module/user",
 		"module/post",
+		"server/core",
 		"server/helper",
 		"server/middleware",
 		"shared/consts",
 		"shared/errs",
-		"shared/mod",
 		"shared/pagination",
 		"shared/strutils",
 	}
@@ -86,44 +86,44 @@ func createDirectories(projectName string) error {
 
 func processTemplates(projectName string, data TemplateData, bar *progressbar.ProgressBar) error {
 	templates := map[string]string{
-		"templates/static/main.go.tmpl":                     "main.go",
-		"templates/static/go.mod.tmpl":                      "go.mod",
-		"templates/static/Makefile.tmpl":                    "Makefile",
-		"templates/static/Dockerfile.tmpl":                  "Dockerfile",
-		"templates/static/gitignore.tmpl":                   ".gitignore",
-		"templates/static/env.example.tmpl":                 ".env.example",
-		"templates/dynamic/config/config.yml.tmpl":          "config/config.yml",
-		"templates/dynamic/contract/user.go.tmpl":           "contract/user.go",
-		"templates/dynamic/infra/init.go.tmpl":              "infra/init.go",
-		"templates/dynamic/infra/config.go.tmpl":            "infra/config.go",
-		"templates/dynamic/infra/database.go.tmpl":          "infra/database.go",
-		"templates/dynamic/infra/jwt/jwt.go.tmpl":           "infra/jwt/jwt.go",
-		"templates/dynamic/server/app.go.tmpl":              "server/app.go",
-		"templates/dynamic/server/helper/helper.go.tmpl":    "server/helper/helper.go",
-		"templates/dynamic/server/middleware/auth.go.tmpl":  "server/middleware/auth.go",
-		"templates/dynamic/server/middleware/cors.go.tmpl":  "server/middleware/cors.go",
-		"templates/dynamic/shared/consts/constants.go.tmpl": "shared/consts/constants.go",
-		"templates/dynamic/shared/errs/errors.go.tmpl":      "shared/errs/errors.go",
-		"templates/dynamic/shared/mod/module.go.tmpl":       "shared/mod/module.go",
-		"templates/dynamic/shared/strutils/string.go.tmpl":  "shared/strutils/string.go",
-		"templates/dynamic/module/user/init.go.tmpl":        "module/user/init.go",
-		"templates/dynamic/module/user/model.go.tmpl":       "module/user/model.go",
-		"templates/dynamic/module/user/dto.go.tmpl":         "module/user/dto.go",
-		"templates/dynamic/module/user/handler.go.tmpl":     "module/user/handler.go",
-		"templates/dynamic/module/user/service.go.tmpl":     "module/user/service.go",
-		"templates/dynamic/module/user/repository.go.tmpl":  "module/user/repository.go",
-		"templates/dynamic/module/auth/init.go.tmpl":        "module/auth/init.go",
-		"templates/dynamic/module/auth/dto.go.tmpl":         "module/auth/dto.go",
-		"templates/dynamic/module/auth/handler.go.tmpl":     "module/auth/handler.go",
-		"templates/dynamic/module/auth/service.go.tmpl":     "module/auth/service.go",
-		"templates/dynamic/module/post/init.go.tmpl":        "module/post/init.go",
-		"templates/dynamic/module/post/model.go.tmpl":       "module/post/model.go",
-		"templates/dynamic/module/post/dto.go.tmpl":         "module/post/dto.go",
-		"templates/dynamic/module/post/handler.go.tmpl":     "module/post/handler.go",
-		"templates/dynamic/module/post/service.go.tmpl":     "module/post/service.go",
-		"templates/dynamic/module/post/repository.go.tmpl":  "module/post/repository.go",
-		"templates/static/shared/pagination/cursor.go.tmpl": "shared/pagination/cursor.go",
-		"templates/static/shared/pagination/offset.go.tmpl": "shared/pagination/offset.go",
+		"templates/main.go.tmpl":                     "main.go",
+		"templates/go.mod.tmpl":                      "go.mod",
+		"templates/Makefile.tmpl":                    "Makefile",
+		"templates/Dockerfile.tmpl":                  "Dockerfile",
+		"templates/gitignore.tmpl":                   ".gitignore",
+		"templates/env.example.tmpl":                 ".env.example",
+		"templates/config/config.yml.tmpl":           "config/config.yml",
+		"templates/contract/user.go.tmpl":            "contract/user.go",
+		"templates/infra/init.go.tmpl":               "infra/init.go",
+		"templates/infra/config.go.tmpl":             "infra/config.go",
+		"templates/infra/database.go.tmpl":           "infra/database.go",
+		"templates/infra/jwt/jwt.go.tmpl":            "infra/jwt/jwt.go",
+		"templates/server/app.go.tmpl":               "server/app.go",
+		"templates/server/helper/helper.go.tmpl":     "server/helper/helper.go",
+		"templates/server/middleware/auth.go.tmpl":   "server/middleware/auth.go",
+		"templates/server/middleware/cors.go.tmpl":   "server/middleware/cors.go",
+		"templates/server/core/module.go.tmpl":       "server/core/module.go",
+		"templates/shared/consts/constants.go.tmpl":  "shared/consts/constants.go",
+		"templates/shared/errs/errors.go.tmpl":       "shared/errs/errors.go",
+		"templates/shared/pagination/cursor.go.tmpl": "shared/pagination/cursor.go",
+		"templates/shared/pagination/offset.go.tmpl": "shared/pagination/offset.go",
+		"templates/shared/strutils/string.go.tmpl":   "shared/strutils/string.go",
+		"templates/module/user/init.go.tmpl":         "module/user/init.go",
+		"templates/module/user/model.go.tmpl":        "module/user/model.go",
+		"templates/module/user/dto.go.tmpl":          "module/user/dto.go",
+		"templates/module/user/handler.go.tmpl":      "module/user/handler.go",
+		"templates/module/user/service.go.tmpl":      "module/user/service.go",
+		"templates/module/user/repository.go.tmpl":   "module/user/repository.go",
+		"templates/module/auth/init.go.tmpl":         "module/auth/init.go",
+		"templates/module/auth/dto.go.tmpl":          "module/auth/dto.go",
+		"templates/module/auth/handler.go.tmpl":      "module/auth/handler.go",
+		"templates/module/auth/service.go.tmpl":      "module/auth/service.go",
+		"templates/module/post/init.go.tmpl":         "module/post/init.go",
+		"templates/module/post/model.go.tmpl":        "module/post/model.go",
+		"templates/module/post/dto.go.tmpl":          "module/post/dto.go",
+		"templates/module/post/handler.go.tmpl":      "module/post/handler.go",
+		"templates/module/post/service.go.tmpl":      "module/post/service.go",
+		"templates/module/post/repository.go.tmpl":   "module/post/repository.go",
 	}
 
 	templateCount := len(templates)
@@ -181,12 +181,12 @@ func printSuccess(projectName string) {
 	fmt.Printf("   │   ├── user/      # User module\n")
 	fmt.Printf("   │   └── post/      # Demo CRUD module\n")
 	fmt.Printf("   ├── server/\n")
+	fmt.Printf("   │   ├── core/\n")
 	fmt.Printf("   │   ├── helper/\n")
 	fmt.Printf("   │   └── middleware/\n")
 	fmt.Printf("   └── shared/\n")
 	fmt.Printf("       ├── consts/\n")
 	fmt.Printf("       ├── errs/\n")
-	fmt.Printf("       ├── mod/\n")
 	fmt.Printf("       ├── pagination/\n")
 	fmt.Printf("       └── strutils/\n")
 

@@ -55,27 +55,6 @@ func (s *Service) Get(ctx context.Context, userID uint) (*contract.UserDTO, erro
 	return toDTO(user), nil
 }
 
-func (s *Service) GetByEmail(ctx context.Context, email string) (*contract.UserDTO, error) {
-	user, err := s.repo.GetByEmail(ctx, email)
-	if err != nil {
-		return nil, err
-	}
-	return toDTO(user), nil
-}
-
-func (s *Service) GetByIDs(ctx context.Context, ids []uint) ([]contract.UserDTO, error) {
-	users, err := s.repo.FindByIDs(ctx, ids)
-	if err != nil {
-		return nil, err
-	}
-
-	dtos := make([]contract.UserDTO, len(users))
-	for i, u := range users {
-		dtos[i] = *toDTO(&u)
-	}
-	return dtos, nil
-}
-
 func (s *Service) ValidateLogin(ctx context.Context, email, password string) (*contract.UserDTO, error) {
 	user, err := s.repo.GetByEmail(ctx, email)
 	if err != nil {
@@ -94,41 +73,6 @@ func (s *Service) ValidateLogin(ctx context.Context, email, password string) (*c
 	}
 
 	return toDTO(user), nil
-}
-
-func (s *Service) UpdateProfile(ctx context.Context, userID uint, name, avatar string) error {
-	user, err := s.repo.First(ctx, userID)
-	if err != nil {
-		return err
-	}
-
-	user.UpdateProfile(name, avatar)
-
-	return s.repo.Update(ctx, userID, map[string]interface{}{
-		"name":       user.Name,
-		"avatar":     user.Avatar,
-		"updated_at": time.Now(),
-	})
-}
-
-func (s *Service) ChangePassword(ctx context.Context, userID uint, oldPassword, newPassword string) error {
-	user, err := s.repo.First(ctx, userID)
-	if err != nil {
-		return err
-	}
-
-	if err = user.ValidatePassword(oldPassword); err != nil {
-		return errs.ErrLoginFailed
-	}
-
-	if err = user.SetPassword(newPassword); err != nil {
-		return errs.ErrInvalidPassword
-	}
-
-	return s.repo.Update(ctx, userID, map[string]interface{}{
-		"password":   user.Password,
-		"updated_at": time.Now(),
-	})
 }
 
 func toDTO(user *User) *contract.UserDTO {

@@ -4,10 +4,10 @@ package auth
 import (
 	"github.com/gin-gonic/gin"
 	"{{.ModuleName}}/contract"
-	"{{.ModuleName}}/shared/mod"
+	"{{.ModuleName}}/server/core"
 )
 
-var _ mod.Module = (*Module)(nil)
+var _ core.Module = (*Module)(nil)
 
 type Module struct {
 	Service *Service
@@ -24,6 +24,6 @@ func New(userSvc contract.UserBiz) *Module {
 	}
 }
 
-func (m *Module) RegisterRoutes(r *gin.RouterGroup) {
-	m.handler.Routes(r)
+func (m *Module) Routes(r *gin.RouterGroup) {
+	m.handler.register(r)
 }

@@ -67,10 +67,10 @@ package {{.ModuleName}}
 import (
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
-	"{{.ModuleName}}/shared/mod"
+	"{{.ModuleName}}/server/core"
 )
 
-var _ mod.Module = (*Module)(nil)
+var _ core.Module = (*Module)(nil)
 
 type Module struct {
 	Service *Service
@@ -88,8 +88,8 @@ func Init(db *gorm.DB) *Module {
 	}
 }
 
-func (m *Module) RegisterRoutes(r *gin.RouterGroup) {
-	m.handler.Routes(r)
+func (m *Module) Routes(r *gin.RouterGroup) {
+	m.handler.register(r)
 }
 `,
 		"model.go.tmpl": `// module/{{.ModuleName}}/model.go
@@ -160,7 +160,7 @@ func NewHandler(svc *Service) *Handler {
 	return &Handler{svc: svc}
 }
 
-func (h *Handler) Routes(r *gin.RouterGroup) {
+func (h *Handler) register(r *gin.RouterGroup) {
 	group := r.Group("/{{.ModuleName}}s")
 	{
 		group.GET("", h.List)
