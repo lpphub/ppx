@@ -57,17 +57,20 @@ func (a *App) setupRouter() {
 		c.JSON(200, gin.H{"status": "ok"})
 	})
 
-	for _, m := range a.initModules() {
+	for _, m := range a.registerModules() {
 		m.Routes(r.Group(""))
 	}
 }
 
-func (a *App) initModules() []core.Module {
+func (a *App) registerModules() []core.Module {
+	registry := core.NewRegistry()
+
 	userMod := user.New(infra.DB)
 	authMod := auth.New(userMod.Service)
 	postMod := post.New(infra.DB)
 
-	return []core.Module{userMod, authMod, postMod}
+	registry.Register(userMod, authMod, postMod)
+	return registry.Modules()
 }
 
 func (a *App) start() {

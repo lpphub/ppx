@@ -103,6 +103,7 @@ func processTemplates(projectName string, data TemplateData, bar *progressbar.Pr
 		"templates/server/middleware/auth.go.tmpl":   "server/middleware/auth.go",
 		"templates/server/middleware/cors.go.tmpl":   "server/middleware/cors.go",
 		"templates/server/core/module.go.tmpl":       "server/core/module.go",
+		"templates/server/core/registry.go.tmpl":     "server/core/registry.go",
 		"templates/shared/consts/constants.go.tmpl":  "shared/consts/constants.go",
 		"templates/shared/errs/errors.go.tmpl":       "shared/errs/errors.go",
 		"templates/shared/pagination/cursor.go.tmpl": "shared/pagination/cursor.go",
