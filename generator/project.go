@@ -60,7 +60,7 @@ func CreateProject(projectName, moduleName string) error {
 func createDirectories(projectName string) error {
 	directories := []string{
 		"config",
-		"contract",
+		"module/contract",
 		"infra/jwt",
 		"module/auth",
 		"module/user",
@@ -93,7 +93,7 @@ func processTemplates(projectName string, data TemplateData, bar *progressbar.Pr
 		"templates/gitignore.tmpl":                   ".gitignore",
 		"templates/env.example.tmpl":                 ".env.example",
 		"templates/config/config.yml.tmpl":           "config/config.yml",
-		"templates/contract/user.go.tmpl":            "contract/user.go",
+		"templates/module/contract/user.go.tmpl":     "module/contract/user.go",
 		"templates/infra/init.go.tmpl":               "infra/init.go",
 		"templates/infra/config.go.tmpl":             "infra/config.go",
 		"templates/infra/database.go.tmpl":           "infra/database.go",
@@ -174,10 +174,10 @@ func printSuccess(projectName string) {
 	color.Cyan("\n📂 Generated directory structure:")
 	fmt.Printf("   %s/\n", projectName)
 	fmt.Printf("   ├── config/\n")
-	fmt.Printf("   ├── contract/\n")
 	fmt.Printf("   ├── infra/\n")
 	fmt.Printf("   │   └── jwt/\n")
 	fmt.Printf("   ├── module/\n")
+	fmt.Printf("   │   ├── contract/   # Contract/Interface definitions\n")
 	fmt.Printf("   │   ├── auth/      # Authentication module\n")
 	fmt.Printf("   │   ├── user/      # User module\n")
 	fmt.Printf("   │   └── post/      # Demo CRUD module\n")

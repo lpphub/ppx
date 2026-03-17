@@ -12,7 +12,7 @@ structures with modular architecture, including user authentication,
 and a demo CRUD module.
 
 Project Structure:
-  - Modular architecture with module/, contract/, infra/, server/, shared/
+  - Modular architecture with module/, module/contract/, infra/, server/, shared/
   - Built-in user and auth modules
   - Demo post module with full CRUD operations
   - JWT authentication middleware

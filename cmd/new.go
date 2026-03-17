@@ -24,8 +24,6 @@ Generated Project Structure:
   myapp/
   ├── config/
   │   └── config.yml
-  ├── contract/
-  │   └── user.go
   ├── infra/
   │   ├── init.go
   │   ├── config.go
@@ -33,6 +31,7 @@ Generated Project Structure:
   │   └── jwt/
   │       └── jwt.go
   ├── module/
+  │   ├── contract/      # Contract/Interface definitions
   │   ├── auth/          # Authentication module
   │   ├── user/          # User module
   │   └── post/          # Demo post module (CRUD example)
