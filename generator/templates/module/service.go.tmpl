@@ -1,0 +1,86 @@
+// module/{{.ModuleName}}/service.go
+package {{.ModuleName}}
+
+import (
+	"context"
+	"time"
+
+	"github.com/jinzhu/copier"
+)
+
+type Service struct {
+	repo *Repository
+}
+
+func NewService(repo *Repository) *Service {
+	return &Service{repo: repo}
+}
+
+func (s *Service) Create(ctx context.Context, userID uint, req Create{{.StructName}}Req) (*{{.StructName}}Resp, error) {
+	item := &{{.StructName}}{
+		Title:     req.Title,
+		Content:   req.Content,
+		Status:    1,
+		CreatedAt: time.Now(),
+		UpdatedAt: time.Now(),
+	}
+
+	if err := s.repo.Create(ctx, item); err != nil {
+		return nil, err
+	}
+
+	return toResp(item), nil
+}
+
+func (s *Service) List(ctx context.Context, page, pageSize int) ([]{{.StructName}}Resp, int64, error) {
+	items, total, err := s.repo.FindAll(ctx, page, pageSize)
+	if err != nil {
+		return nil, 0, err
+	}
+
+	var resp []{{.StructName}}Resp
+	for _, item := range items {
+		resp = append(resp, *toResp(&item))
+	}
+
+	return resp, total, nil
+}
+
+func (s *Service) Get(ctx context.Context, id uint) (*{{.StructName}}Resp, error) {
+	item, err := s.repo.First(ctx, id)
+	if err != nil {
+		return nil, err
+	}
+
+	return toResp(item), nil
+}
+
+func (s *Service) Update(ctx context.Context, id uint, req Update{{.StructName}}Req) error {
+	item, err := s.repo.First(ctx, id)
+	if err != nil {
+		return err
+	}
+
+	if req.Title != "" {
+		item.Title = req.Title
+	}
+	if req.Content != "" {
+		item.Content = req.Content
+	}
+	if req.Status != nil {
+		item.Status = *req.Status
+	}
+	item.UpdatedAt = time.Now()
+
+	return s.repo.Update(ctx, item)
+}
+
+func (s *Service) Delete(ctx context.Context, id uint) error {
+	return s.repo.Delete(ctx, id)
+}
+
+func toResp(item *{{.StructName}}) *{{.StructName}}Resp {
+	var resp {{.StructName}}Resp
+	_ = copier.Copy(&resp, item)
+	return &resp
+}
