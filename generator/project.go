@@ -64,7 +64,7 @@ func createDirectories(projectName string) error {
 		"internal/modules/auth",
 		"internal/modules/user",
 		"internal/modules/post",
-		"internal/platform/jwt",
+		"internal/infra/jwt",
 		"internal/server/core",
 		"internal/server/helper",
 		"internal/server/middleware",
@@ -94,10 +94,10 @@ func processTemplates(projectName string, data TemplateData, bar *progressbar.Pr
 		"templates/env.example.tmpl":                 ".env.example",
 		"templates/config/config.yml.tmpl":           "config/config.yml",
 		"templates/module/contract/user.go.tmpl":     "internal/modules/contract/user.go",
-		"templates/platform/init.go.tmpl":            "internal/platform/init.go",
-		"templates/platform/config.go.tmpl":          "internal/platform/config.go",
-		"templates/platform/dbs.go.tmpl":             "internal/platform/dbs.go",
-		"templates/platform/jwt/jwt.go.tmpl":         "internal/platform/jwt/jwt.go",
+		"templates/infra/init.go.tmpl":               "internal/infra/init.go",
+		"templates/infra/config.go.tmpl":             "internal/infra/config.go",
+		"templates/infra/dbs.go.tmpl":                "internal/infra/dbs.go",
+		"templates/infra/jwt/jwt.go.tmpl":            "internal/infra/jwt/jwt.go",
 		"templates/server/app.go.tmpl":               "internal/server/app.go",
 		"templates/server/helper/helper.go.tmpl":     "internal/server/helper/helper.go",
 		"templates/server/middleware/auth.go.tmpl":   "internal/server/middleware/auth.go",
@@ -181,7 +181,7 @@ func printSuccess(projectName string) {
 	fmt.Printf("   │   │   ├── auth/       # Authentication module\n")
 	fmt.Printf("   │   │   ├── user/       # User module\n")
 	fmt.Printf("   │   │   └── post/       # Demo CRUD module\n")
-	fmt.Printf("   │   ├── platform/\n")
+	fmt.Printf("   │   ├── infra/\n")
 	fmt.Printf("   │   │   ├── dbs.go\n")
 	fmt.Printf("   │   │   └── jwt/\n")
 	fmt.Printf("   │   ├── server/\n")

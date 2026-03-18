@@ -31,7 +31,7 @@ Generated Project Structure:
   │   │   ├── auth/          # Authentication module
   │   │   ├── user/          # User module
   │   │   └── post/          # Demo post module (CRUD example)
-  │   ├── platform/
+  │   ├── infra/
   │   │   ├── dbs.go
   │   │   └── jwt/
   │   ├── server/
