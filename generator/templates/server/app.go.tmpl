@@ -11,12 +11,12 @@ import (
 	"syscall"
 	"time"
 
-	"{{.ModuleName}}/infra"
-	"{{.ModuleName}}/module/auth"
-	"{{.ModuleName}}/module/post"
-	"{{.ModuleName}}/module/user"
-	"{{.ModuleName}}/server/middleware"
-	"{{.ModuleName}}/server/core"
+	"{{.ModuleName}}/internal/platform"
+	"{{.ModuleName}}/internal/modules/auth"
+	"{{.ModuleName}}/internal/modules/post"
+	"{{.ModuleName}}/internal/modules/user"
+	"{{.ModuleName}}/internal/server/middleware"
+	"{{.ModuleName}}/internal/server/core"
 
 	"github.com/gin-gonic/gin"
 	"github.com/lpphub/goweb/ext/logx"
@@ -39,7 +39,7 @@ func (a *App) Run() {
 }
 
 func (a *App) init() {
-	if err := infra.Init(); err != nil {
+	if err := platform.Init(); err != nil {
 		panic(fmt.Sprintf("Failed to init: %v", err))
 	}
 	a.setupRouter()
@@ -65,9 +65,9 @@ func (a *App) setupRouter() {
 func (a *App) registerModules() []core.Module {
 	registry := core.NewRegistry()
 
-	userMod := user.New(infra.DB)
+	userMod := user.New(platform.DB)
 	authMod := auth.New(userMod.Service)
-	postMod := post.New(infra.DB)
+	postMod := post.New(platform.DB)
 
 	registry.Register(userMod, authMod, postMod)
 	return registry.Modules()
@@ -75,7 +75,7 @@ func (a *App) registerModules() []core.Module {
 
 func (a *App) start() {
 	a.server = &http.Server{
-		Addr:    fmt.Sprintf(":%d", infra.Cfg.Server.Port),
+		Addr:    fmt.Sprintf(":%d", platform.Cfg.Server.Port),
 		Handler: a.engine,
 	}
 

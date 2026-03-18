@@ -1,10 +1,10 @@
-// module/auth/init.go
-package auth
+// module/user/module.go
+package user
 
 import (
 	"github.com/gin-gonic/gin"
-	"{{.ModuleName}}/module/contract"
-	"{{.ModuleName}}/server/core"
+	"gorm.io/gorm"
+	"{{.ModuleName}}/internal/server/core"
 )
 
 var _ core.Module = (*Module)(nil)
@@ -14,8 +14,9 @@ type Module struct {
 	handler *Handler
 }
 
-func New(userSvc contract.UserBiz) *Module {
-	svc := NewService(userSvc)
+func New(db *gorm.DB) *Module {
+	repo := NewRepository(db)
+	svc := NewService(repo)
 	h := NewHandler(svc)
 
 	return &Module{

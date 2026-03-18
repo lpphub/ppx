@@ -5,7 +5,7 @@ import (
 	"sync"
 
 	"github.com/lpphub/goweb/pkg/jwt"
-	"{{.ModuleName}}/infra"
+	"{{.ModuleName}}/internal/platform"
 )
 
 type (
@@ -21,9 +21,9 @@ var (
 func useJwt() *jwt.Manager {
 	once.Do(func() {
 		jm, _ = jwt.NewManager(jwt.Config{
-			Secret:           infra.Cfg.JWT.Secret,
-			AccessExpireSec:  infra.Cfg.JWT.ExpireTime,
-			RefreshExpireSec: infra.Cfg.JWT.RefreshExpireTime,
+			Secret:           platform.Cfg.JWT.Secret,
+			AccessExpireSec:  platform.Cfg.JWT.ExpireTime,
+			RefreshExpireSec: platform.Cfg.JWT.RefreshExpireTime,
 		})
 	})
 	return jm

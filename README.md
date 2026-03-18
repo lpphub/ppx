@@ -41,49 +41,56 @@ ppx module product
 
 ```
 myproject/
+├── cmd/
+│   └── api/
+│       └── main.go           # Application entry point
 ├── config/
-│   └── config.yml          # Configuration file
-├── contract/
-│   └── user.go             # User service interface
-├── infra/
-│   ├── init.go             # Infrastructure initialization
-│   ├── config.go           # Config loader
-│   ├── database.go         # Database connections
-│   └── jwt/
-│       └── jwt.go          # JWT utilities
-├── module/
-│   ├── auth/               # Authentication module
-│   │   ├── init.go
-│   │   ├── dto.go
-│   │   ├── handler.go
-│   │   └── service.go
-│   ├── user/               # User module
-│   │   ├── init.go
-│   │   ├── model.go
-│   │   ├── dto.go
-│   │   ├── handler.go
-│   │   ├── service.go
-│   │   └── repository.go
-│   └── post/               # Demo CRUD module
-│       ├── init.go
-│       ├── model.go
-│       ├── dto.go
-│       ├── handler.go
-│       ├── service.go
-│       └── repository.go
-├── server/
-│   ├── app.go              # HTTP server
-│   ├── helper/
-│   │   └── helper.go       # HTTP helpers
-│   └── middleware/
-│       ├── auth.go         # JWT authentication
-│       └── cors.go         # CORS middleware
-├── shared/
-│   ├── consts/             # Constants
-│   ├── errs/               # Error definitions
-│   ├── mod/                # Module interface
-│   └── strutils/           # String utilities
-├── main.go
+│   └── config.yml            # Configuration file
+├── internal/
+│   ├── modules/
+│   │   ├── contract/         # Interface definitions
+│   │   │   └── user.go
+│   │   ├── auth/             # Authentication module
+│   │   │   ├── module.go
+│   │   │   ├── dto.go
+│   │   │   ├── handler.go
+│   │   │   └── service.go
+│   │   ├── user/             # User module
+│   │   │   ├── module.go
+│   │   │   ├── model.go
+│   │   │   ├── dto.go
+│   │   │   ├── handler.go
+│   │   │   ├── service.go
+│   │   │   └── repo.go
+│   │   └── post/             # Demo CRUD module
+│   │       ├── module.go
+│   │       ├── model.go
+│   │       ├── dto.go
+│   │       ├── handler.go
+│   │       ├── service.go
+│   │       └── repo.go
+│   ├── platform/
+│   │   ├── db/
+│   │   │   └── mysql.go      # Database connection
+│   │   ├── config.go         # Config loader
+│   │   ├── init.go           # Infrastructure init
+│   │   └── jwt/
+│   │       └── jwt.go        # JWT utilities
+│   ├── server/
+│   │   ├── app.go            # HTTP server
+│   │   ├── core/
+│   │   │   ├── module.go
+│   │   │   └── registry.go
+│   │   ├── helper/
+│   │   │   └── helper.go
+│   │   └── middleware/
+│   │       ├── auth.go       # JWT authentication
+│   │       └── cors.go       # CORS middleware
+│   └── shared/
+│       ├── consts/           # Constants
+│       ├── errs/             # Error definitions
+│       ├── pagination/       # Pagination utilities
+│       └── strutils/         # String utilities
 ├── go.mod
 ├── Makefile
 └── Dockerfile
@@ -135,7 +142,7 @@ cd myproject
 go mod tidy
 
 # Run the server
-go run .
+go run ./cmd/api
 ```
 
 ## License

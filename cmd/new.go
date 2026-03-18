@@ -22,29 +22,30 @@ Examples:
 
 Generated Project Structure:
   myapp/
+  ├── cmd/
+  │   └── api/
+  │       └── main.go
   ├── config/
   │   └── config.yml
-  ├── infra/
-  │   ├── init.go
-  │   ├── config.go
-  │   ├── database.go
-  │   └── jwt/
-  │       └── jwt.go
-  ├── module/
-  │   ├── contract/      # Contract/Interface definitions
-  │   ├── auth/          # Authentication module
-  │   ├── user/          # User module
-  │   └── post/          # Demo post module (CRUD example)
-  ├── server/
-  │   ├── app.go
-  │   ├── helper/
-  │   └── middleware/
-  ├── shared/
-  │   ├── consts/
-  │   ├── errs/
-  │   ├── mod/
-  │   └── strutils/
-  ├── main.go
+  ├── internal/
+  │   ├── modules/
+  │   │   ├── contract/      # Contract/Interface definitions
+  │   │   ├── auth/          # Authentication module
+  │   │   ├── user/          # User module
+  │   │   └── post/          # Demo post module (CRUD example)
+  │   ├── platform/
+  │   │   ├── db/
+  │   │   └── jwt/
+  │   ├── server/
+  │   │   ├── app.go
+  │   │   ├── core/
+  │   │   ├── helper/
+  │   │   └── middleware/
+  │   └── shared/
+  │       ├── consts/
+  │       ├── errs/
+  │       ├── pagination/
+  │       └── strutils/
   ├── go.mod
   ├── Makefile
   └── Dockerfile`,
