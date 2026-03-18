@@ -85,28 +85,28 @@ func createDirectories(projectName string) error {
 
 func processTemplates(projectName string, data TemplateData, bar *progressbar.ProgressBar) error {
 	templates := map[string]string{
-		"templates/main.go.tmpl":                      "main.go",
-		"templates/go.mod.tmpl":                       "go.mod",
-		"templates/Makefile.tmpl":                     "Makefile",
-		"templates/Dockerfile.tmpl":                   "Dockerfile",
-		"templates/gitignore.tmpl":                    ".gitignore",
-		"templates/env.example.tmpl":                  ".env.example",
-		"templates/config/config.yml.tmpl":            "config/config.yml",
+		"templates/main.go.tmpl":                       "main.go",
+		"templates/go.mod.tmpl":                        "go.mod",
+		"templates/Makefile.tmpl":                      "Makefile",
+		"templates/Dockerfile.tmpl":                    "Dockerfile",
+		"templates/gitignore.tmpl":                     ".gitignore",
+		"templates/env.example.tmpl":                   ".env.example",
+		"templates/config/config.yml.tmpl":             "config/config.yml",
 		"templates/modules/core/module.go.tmpl":        "internal/modules/core/module.go",
 		"templates/modules/core/contract/user.go.tmpl": "internal/modules/core/contract/user.go",
-		"templates/infra/init.go.tmpl":                "internal/infra/init.go",
-		"templates/infra/config.go.tmpl":              "internal/infra/config.go",
-		"templates/infra/dbs.go.tmpl":                 "internal/infra/dbs.go",
-		"templates/infra/jwt/jwt.go.tmpl":             "internal/infra/jwt/jwt.go",
-		"templates/server/app.go.tmpl":                "internal/server/app.go",
-		"templates/server/helper/helper.go.tmpl":      "internal/server/helper/helper.go",
-		"templates/server/middleware/auth.go.tmpl":    "internal/server/middleware/auth.go",
-		"templates/server/middleware/cors.go.tmpl":    "internal/server/middleware/cors.go",
-		"templates/shared/consts/constants.go.tmpl":   "internal/shared/consts/constants.go",
-		"templates/shared/errs/errors.go.tmpl":        "internal/shared/errs/errors.go",
-		"templates/shared/pagination/cursor.go.tmpl":  "internal/shared/pagination/cursor.go",
-		"templates/shared/pagination/offset.go.tmpl":  "internal/shared/pagination/offset.go",
-		"templates/shared/strutils/string.go.tmpl":    "internal/shared/strutils/string.go",
+		"templates/infra/init.go.tmpl":                 "internal/infra/init.go",
+		"templates/infra/config.go.tmpl":               "internal/infra/config.go",
+		"templates/infra/dbs.go.tmpl":                  "internal/infra/dbs.go",
+		"templates/infra/jwt/jwt.go.tmpl":              "internal/infra/jwt/jwt.go",
+		"templates/server/app.go.tmpl":                 "internal/server/app.go",
+		"templates/server/helper/helper.go.tmpl":       "internal/server/helper/helper.go",
+		"templates/server/middleware/auth.go.tmpl":     "internal/server/middleware/auth.go",
+		"templates/server/middleware/cors.go.tmpl":     "internal/server/middleware/cors.go",
+		"templates/shared/consts/constants.go.tmpl":    "internal/shared/consts/constants.go",
+		"templates/shared/errs/errors.go.tmpl":         "internal/shared/errs/errors.go",
+		"templates/shared/pagination/cursor.go.tmpl":   "internal/shared/pagination/cursor.go",
+		"templates/shared/pagination/offset.go.tmpl":   "internal/shared/pagination/offset.go",
+		"templates/shared/strutils/string.go.tmpl":     "internal/shared/strutils/string.go",
 		"templates/modules/user/module.go.tmpl":        "internal/modules/user/module.go",
 		"templates/modules/user/model.go.tmpl":         "internal/modules/user/model.go",
 		"templates/modules/user/dto.go.tmpl":           "internal/modules/user/dto.go",
@@ -171,6 +171,7 @@ func printSuccess(projectName string) {
 
 	color.Cyan("\n📂 Generated directory structure:")
 	fmt.Printf("   %s/\n", projectName)
+	fmt.Printf("   ├── main.go\n")
 	fmt.Printf("   ├── config/\n")
 	fmt.Printf("   │   └── config.yml\n")
 	fmt.Printf("   ├── internal/\n")
