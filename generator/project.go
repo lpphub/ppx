@@ -60,12 +60,11 @@ func CreateProject(projectName, moduleName string) error {
 func createDirectories(projectName string) error {
 	directories := []string{
 		"config",
-		"internal/modules/contract",
+		"internal/modules/core/contract",
 		"internal/modules/auth",
 		"internal/modules/user",
 		"internal/modules/post",
 		"internal/infra/jwt",
-		"internal/server/core",
 		"internal/server/helper",
 		"internal/server/middleware",
 		"internal/shared/consts",
@@ -86,45 +85,44 @@ func createDirectories(projectName string) error {
 
 func processTemplates(projectName string, data TemplateData, bar *progressbar.ProgressBar) error {
 	templates := map[string]string{
-		"templates/main.go.tmpl":                     "main.go",
-		"templates/go.mod.tmpl":                      "go.mod",
-		"templates/Makefile.tmpl":                    "Makefile",
-		"templates/Dockerfile.tmpl":                  "Dockerfile",
-		"templates/gitignore.tmpl":                   ".gitignore",
-		"templates/env.example.tmpl":                 ".env.example",
-		"templates/config/config.yml.tmpl":           "config/config.yml",
-		"templates/module/contract/user.go.tmpl":     "internal/modules/contract/user.go",
-		"templates/infra/init.go.tmpl":               "internal/infra/init.go",
-		"templates/infra/config.go.tmpl":             "internal/infra/config.go",
-		"templates/infra/dbs.go.tmpl":                "internal/infra/dbs.go",
-		"templates/infra/jwt/jwt.go.tmpl":            "internal/infra/jwt/jwt.go",
-		"templates/server/app.go.tmpl":               "internal/server/app.go",
-		"templates/server/helper/helper.go.tmpl":     "internal/server/helper/helper.go",
-		"templates/server/middleware/auth.go.tmpl":   "internal/server/middleware/auth.go",
-		"templates/server/middleware/cors.go.tmpl":   "internal/server/middleware/cors.go",
-		"templates/server/core/module.go.tmpl":       "internal/server/core/module.go",
-		"templates/server/core/registry.go.tmpl":     "internal/server/core/registry.go",
-		"templates/shared/consts/constants.go.tmpl":  "internal/shared/consts/constants.go",
-		"templates/shared/errs/errors.go.tmpl":       "internal/shared/errs/errors.go",
-		"templates/shared/pagination/cursor.go.tmpl": "internal/shared/pagination/cursor.go",
-		"templates/shared/pagination/offset.go.tmpl": "internal/shared/pagination/offset.go",
-		"templates/shared/strutils/string.go.tmpl":   "internal/shared/strutils/string.go",
-		"templates/module/user/module.go.tmpl":       "internal/modules/user/module.go",
-		"templates/module/user/model.go.tmpl":        "internal/modules/user/model.go",
-		"templates/module/user/dto.go.tmpl":          "internal/modules/user/dto.go",
-		"templates/module/user/handler.go.tmpl":      "internal/modules/user/handler.go",
-		"templates/module/user/service.go.tmpl":      "internal/modules/user/service.go",
-		"templates/module/user/repo.go.tmpl":         "internal/modules/user/repo.go",
-		"templates/module/auth/module.go.tmpl":       "internal/modules/auth/module.go",
-		"templates/module/auth/dto.go.tmpl":          "internal/modules/auth/dto.go",
-		"templates/module/auth/handler.go.tmpl":      "internal/modules/auth/handler.go",
-		"templates/module/auth/service.go.tmpl":      "internal/modules/auth/service.go",
-		"templates/module/post/module.go.tmpl":       "internal/modules/post/module.go",
-		"templates/module/post/model.go.tmpl":        "internal/modules/post/model.go",
-		"templates/module/post/dto.go.tmpl":          "internal/modules/post/dto.go",
-		"templates/module/post/handler.go.tmpl":      "internal/modules/post/handler.go",
-		"templates/module/post/service.go.tmpl":      "internal/modules/post/service.go",
-		"templates/module/post/repo.go.tmpl":         "internal/modules/post/repo.go",
+		"templates/main.go.tmpl":                      "main.go",
+		"templates/go.mod.tmpl":                       "go.mod",
+		"templates/Makefile.tmpl":                     "Makefile",
+		"templates/Dockerfile.tmpl":                   "Dockerfile",
+		"templates/gitignore.tmpl":                    ".gitignore",
+		"templates/env.example.tmpl":                  ".env.example",
+		"templates/config/config.yml.tmpl":            "config/config.yml",
+		"templates/module/core/module.go.tmpl":        "internal/modules/core/module.go",
+		"templates/module/core/contract/user.go.tmpl": "internal/modules/core/contract/user.go",
+		"templates/infra/init.go.tmpl":                "internal/infra/init.go",
+		"templates/infra/config.go.tmpl":              "internal/infra/config.go",
+		"templates/infra/dbs.go.tmpl":                 "internal/infra/dbs.go",
+		"templates/infra/jwt/jwt.go.tmpl":             "internal/infra/jwt/jwt.go",
+		"templates/server/app.go.tmpl":                "internal/server/app.go",
+		"templates/server/helper/helper.go.tmpl":      "internal/server/helper/helper.go",
+		"templates/server/middleware/auth.go.tmpl":    "internal/server/middleware/auth.go",
+		"templates/server/middleware/cors.go.tmpl":    "internal/server/middleware/cors.go",
+		"templates/shared/consts/constants.go.tmpl":   "internal/shared/consts/constants.go",
+		"templates/shared/errs/errors.go.tmpl":        "internal/shared/errs/errors.go",
+		"templates/shared/pagination/cursor.go.tmpl":  "internal/shared/pagination/cursor.go",
+		"templates/shared/pagination/offset.go.tmpl":  "internal/shared/pagination/offset.go",
+		"templates/shared/strutils/string.go.tmpl":    "internal/shared/strutils/string.go",
+		"templates/module/user/module.go.tmpl":        "internal/modules/user/module.go",
+		"templates/module/user/model.go.tmpl":         "internal/modules/user/model.go",
+		"templates/module/user/dto.go.tmpl":           "internal/modules/user/dto.go",
+		"templates/module/user/handler.go.tmpl":       "internal/modules/user/handler.go",
+		"templates/module/user/service.go.tmpl":       "internal/modules/user/service.go",
+		"templates/module/user/repo.go.tmpl":          "internal/modules/user/repo.go",
+		"templates/module/auth/module.go.tmpl":        "internal/modules/auth/module.go",
+		"templates/module/auth/dto.go.tmpl":           "internal/modules/auth/dto.go",
+		"templates/module/auth/handler.go.tmpl":       "internal/modules/auth/handler.go",
+		"templates/module/auth/service.go.tmpl":       "internal/modules/auth/service.go",
+		"templates/module/post/module.go.tmpl":        "internal/modules/post/module.go",
+		"templates/module/post/model.go.tmpl":         "internal/modules/post/model.go",
+		"templates/module/post/dto.go.tmpl":           "internal/modules/post/dto.go",
+		"templates/module/post/handler.go.tmpl":       "internal/modules/post/handler.go",
+		"templates/module/post/service.go.tmpl":       "internal/modules/post/service.go",
+		"templates/module/post/repo.go.tmpl":          "internal/modules/post/repo.go",
 	}
 
 	templateCount := len(templates)
@@ -177,15 +175,14 @@ func printSuccess(projectName string) {
 	fmt.Printf("   │   └── config.yml\n")
 	fmt.Printf("   ├── internal/\n")
 	fmt.Printf("   │   ├── modules/\n")
-	fmt.Printf("   │   │   ├── contract/   # Interface definitions\n")
-	fmt.Printf("   │   │   ├── auth/       # Authentication module\n")
-	fmt.Printf("   │   │   ├── user/       # User module\n")
-	fmt.Printf("   │   │   └── post/       # Demo CRUD module\n")
+	fmt.Printf("   │   │   ├── core/        # Module interface & contracts\n")
+	fmt.Printf("   │   │   ├── auth/        # Authentication module\n")
+	fmt.Printf("   │   │   ├── user/        # User module\n")
+	fmt.Printf("   │   │   └── post/        # Demo CRUD module\n")
 	fmt.Printf("   │   ├── infra/\n")
 	fmt.Printf("   │   │   ├── dbs.go\n")
 	fmt.Printf("   │   │   └── jwt/\n")
 	fmt.Printf("   │   ├── server/\n")
-	fmt.Printf("   │   │   ├── core/\n")
 	fmt.Printf("   │   │   ├── helper/\n")
 	fmt.Printf("   │   │   └── middleware/\n")
 	fmt.Printf("   │   └── shared/\n")

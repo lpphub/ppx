@@ -15,8 +15,8 @@ import (
 	"{{.ModuleName}}/internal/modules/auth"
 	"{{.ModuleName}}/internal/modules/post"
 	"{{.ModuleName}}/internal/modules/user"
+	"{{.ModuleName}}/internal/modules/core"
 	"{{.ModuleName}}/internal/server/middleware"
-	"{{.ModuleName}}/internal/server/core"
 
 	"github.com/gin-gonic/gin"
 	"github.com/lpphub/goweb/ext/logx"
@@ -24,12 +24,16 @@ import (
 )
 
 type App struct {
-	engine *gin.Engine
-	server *http.Server
+	engine  *gin.Engine
+	server  *http.Server
+	modules []core.Module
 }
 
 func New() *App {
-	return &App{engine: gin.New()}
+	return &App{
+		engine:  gin.New(),
+		modules: make([]core.Module, 0),
+	}
 }
 
 func (a *App) Run() {
@@ -57,20 +61,18 @@ func (a *App) setupRouter() {
 		c.JSON(200, gin.H{"status": "ok"})
 	})
 
-	for _, m := range a.registerModules() {
+	a.registerModules()
+	for _, m := range a.modules {
 		m.Routes(r.Group(""))
 	}
 }
 
-func (a *App) registerModules() []core.Module {
-	registry := core.NewRegistry()
-
+func (a *App) registerModules() {
 	userMod := user.New(infra.DB)
 	authMod := auth.New(userMod.Service)
 	postMod := post.New(infra.DB)
 
-	registry.Register(userMod, authMod, postMod)
-	return registry.Modules()
+	a.modules = append(a.modules, userMod, authMod, postMod)
 }
 
 func (a *App) start() {
