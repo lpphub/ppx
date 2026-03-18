@@ -171,7 +171,6 @@ func printSuccess(projectName string) {
 
 	color.Cyan("\n📂 Generated directory structure:")
 	fmt.Printf("   %s/\n", projectName)
-	fmt.Printf("   ├── main.go\n")
 	fmt.Printf("   ├── config/\n")
 	fmt.Printf("   │   └── config.yml\n")
 	fmt.Printf("   ├── internal/\n")
@@ -191,6 +190,7 @@ func printSuccess(projectName string) {
 	fmt.Printf("   │       ├── errs/\n")
 	fmt.Printf("   │       ├── pagination/\n")
 	fmt.Printf("   │       └── strutils/\n")
+	fmt.Printf("   ├── main.go\n")
 	fmt.Printf("   ├── go.mod\n")
 	fmt.Printf("   ├── Makefile\n")
 	fmt.Printf("   └── Dockerfile\n")

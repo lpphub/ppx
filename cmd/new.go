@@ -22,7 +22,6 @@ Examples:
 
 Generated Project Structure:
   myapp/
-  ├── main.go
   ├── config/
   │   └── config.yml
   ├── internal/
@@ -43,6 +42,7 @@ Generated Project Structure:
   │       ├── errs/
   │       ├── pagination/
   │       └── strutils/
+  ├── main.go
   ├── go.mod
   ├── Makefile
   └── Dockerfile`,
