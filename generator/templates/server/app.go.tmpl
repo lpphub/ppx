@@ -24,16 +24,12 @@ import (
 )
 
 type App struct {
-	engine  *gin.Engine
-	server  *http.Server
-	modules []core.Module
+	engine *gin.Engine
+	server *http.Server
 }
 
 func New() *App {
-	return &App{
-		engine:  gin.New(),
-		modules: make([]core.Module, 0),
-	}
+	return &App{engine: gin.New()}
 }
 
 func (a *App) Run() {
@@ -61,18 +57,17 @@ func (a *App) setupRouter() {
 		c.JSON(200, gin.H{"status": "ok"})
 	})
 
-	a.registerModules()
-	for _, m := range a.modules {
+	for _, m := range a.registerModules() {
 		m.Routes(r.Group(""))
 	}
 }
 
-func (a *App) registerModules() {
+func (a *App) registerModules() []core.Module {
 	userMod := user.New(infra.DB)
 	authMod := auth.New(userMod.Service)
 	postMod := post.New(infra.DB)
 
-	a.modules = append(a.modules, userMod, authMod, postMod)
+	return []core.Module{userMod, authMod, postMod}
 }
 
 func (a *App) start() {

@@ -8,7 +8,7 @@ import (
 	"text/template"
 )
 
-//go:embed templates/module/*.tmpl
+//go:embed templates/modules/*.tmpl
 var moduleTemplateFS embed.FS
 
 type ModuleData struct {
@@ -37,7 +37,7 @@ func CreateModule(moduleName, structName string) error {
 	}
 
 	for templateName, outputName := range files {
-		templateContent, err := moduleTemplateFS.ReadFile("templates/module/" + templateName)
+		templateContent, err := moduleTemplateFS.ReadFile("templates/modules/" + templateName)
 		if err != nil {
 			return fmt.Errorf("failed to read template %s: %w", templateName, err)
 		}
