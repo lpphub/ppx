@@ -59,7 +59,6 @@ func CreateProject(projectName, moduleName string) error {
 
 func createDirectories(projectName string) error {
 	directories := []string{
-		"cmd/api",
 		"config",
 		"internal/modules/contract",
 		"internal/modules/auth",
@@ -87,7 +86,7 @@ func createDirectories(projectName string) error {
 
 func processTemplates(projectName string, data TemplateData, bar *progressbar.ProgressBar) error {
 	templates := map[string]string{
-		"templates/cmd/api/main.go.tmpl":             "cmd/api/main.go",
+		"templates/main.go.tmpl":                     "main.go",
 		"templates/go.mod.tmpl":                      "go.mod",
 		"templates/Makefile.tmpl":                    "Makefile",
 		"templates/Dockerfile.tmpl":                  "Dockerfile",
@@ -97,7 +96,7 @@ func processTemplates(projectName string, data TemplateData, bar *progressbar.Pr
 		"templates/module/contract/user.go.tmpl":     "internal/modules/contract/user.go",
 		"templates/platform/init.go.tmpl":            "internal/platform/init.go",
 		"templates/platform/config.go.tmpl":          "internal/platform/config.go",
-		"templates/platform/mysql.go.tmpl":           "internal/platform/mysql.go",
+		"templates/platform/dbs.go.tmpl":             "internal/platform/dbs.go",
 		"templates/platform/jwt/jwt.go.tmpl":         "internal/platform/jwt/jwt.go",
 		"templates/server/app.go.tmpl":               "internal/server/app.go",
 		"templates/server/helper/helper.go.tmpl":     "internal/server/helper/helper.go",
@@ -174,9 +173,6 @@ func printSuccess(projectName string) {
 
 	color.Cyan("\n📂 Generated directory structure:")
 	fmt.Printf("   %s/\n", projectName)
-	fmt.Printf("   ├── cmd/\n")
-	fmt.Printf("   │   └── api/\n")
-	fmt.Printf("   │       └── main.go\n")
 	fmt.Printf("   ├── config/\n")
 	fmt.Printf("   │   └── config.yml\n")
 	fmt.Printf("   ├── internal/\n")
@@ -186,7 +182,7 @@ func printSuccess(projectName string) {
 	fmt.Printf("   │   │   ├── user/       # User module\n")
 	fmt.Printf("   │   │   └── post/       # Demo CRUD module\n")
 	fmt.Printf("   │   ├── platform/\n")
-	fmt.Printf("   │   │   ├── mysql.go\n")
+	fmt.Printf("   │   │   ├── dbs.go\n")
 	fmt.Printf("   │   │   └── jwt/\n")
 	fmt.Printf("   │   ├── server/\n")
 	fmt.Printf("   │   │   ├── core/\n")
@@ -206,7 +202,7 @@ func printSuccess(projectName string) {
 	fmt.Printf("   2. Update config/config.yml with your database credentials\n")
 	fmt.Printf("   3. cp .env.example .env && edit .env for local development\n")
 	fmt.Printf("   4. go mod tidy\n")
-	fmt.Printf("   5. go run ./cmd/api\n")
+	fmt.Printf("   5. go run .\n")
 
 	color.Yellow("\n⚠ Don't forget:")
 	fmt.Printf("   - Update config/config.yml (Database, Redis, JWT settings)\n")

@@ -22,9 +22,7 @@ Examples:
 
 Generated Project Structure:
   myapp/
-  ├── cmd/
-  │   └── api/
-  │       └── main.go
+  ├── main.go
   ├── config/
   │   └── config.yml
   ├── internal/
@@ -34,7 +32,7 @@ Generated Project Structure:
   │   │   ├── user/          # User module
   │   │   └── post/          # Demo post module (CRUD example)
   │   ├── platform/
-  │   │   ├── db/
+  │   │   ├── dbs.go
   │   │   └── jwt/
   │   ├── server/
   │   │   ├── app.go
