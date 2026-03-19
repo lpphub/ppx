@@ -5,15 +5,15 @@ import (
 	"context"
 
 	"github.com/jinzhu/copier"
-	"{{.ModuleName}}/internal/modules/core/contract"
+	"{{.ModuleName}}/internal/shared/contracts"
 	"{{.ModuleName}}/internal/infra/jwt"
 )
 
 type Service struct {
-	userSvc contract.UserBiz
+	userSvc contracts.UserBiz
 }
 
-func NewService(userSvc contract.UserBiz) *Service {
+func NewService(userSvc contracts.UserBiz) *Service {
 	return &Service{userSvc: userSvc}
 }
 

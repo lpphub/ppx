@@ -3,7 +3,7 @@ package auth
 
 import (
 	"github.com/gin-gonic/gin"
-	"{{.ModuleName}}/internal/modules/core/contract"
+	"{{.ModuleName}}/internal/shared/contracts"
 	"{{.ModuleName}}/internal/modules/core"
 )
 
@@ -14,7 +14,7 @@ type Module struct {
 	handler *Handler
 }
 
-func New(userSvc contract.UserBiz) *Module {
+func New(userSvc contracts.UserBiz) *Module {
 	svc := NewService(userSvc)
 	h := NewHandler(svc)
 
