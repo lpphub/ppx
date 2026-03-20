@@ -378,7 +378,7 @@ templates := map[string]string{
     "templates/platform/db/mysql.go.tmpl":      "internal/platform/db/mysql.go",
     "templates/platform/jwt/jwt.go.tmpl":       "internal/platform/jwt/jwt.go",
     "templates/server/app.go.tmpl":             "internal/server/app.go",
-    "templates/server/helper/helper.go.tmpl":   "internal/server/helper/helper.go",
+    "templates/server/helper/response.go.tmpl":   "internal/server/helper/helper.go",
     "templates/server/middleware/auth.go.tmpl": "internal/server/middleware/auth.go",
     "templates/server/middleware/cors.go.tmpl": "internal/server/middleware/cors.go",
     "templates/server/core/module.go.tmpl":     "internal/server/core/module.go",

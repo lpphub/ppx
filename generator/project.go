@@ -98,7 +98,7 @@ func processTemplates(projectName string, data TemplateData, bar *progressbar.Pr
 		"templates/infra/dbs.go.tmpl":                "internal/infra/dbs.go",
 		"templates/infra/jwt/jwt.go.tmpl":            "internal/infra/jwt/jwt.go",
 		"templates/server/app.go.tmpl":               "internal/server/app.go",
-		"templates/server/helper/helper.go.tmpl":     "internal/server/helper/helper.go",
+		"templates/server/helper/response.go.tmpl":   "internal/server/helper/response.go",
 		"templates/server/middleware/auth.go.tmpl":   "internal/server/middleware/auth.go",
 		"templates/server/middleware/cors.go.tmpl":   "internal/server/middleware/cors.go",
 		"templates/shared/consts/constants.go.tmpl":  "internal/shared/consts/constants.go",
