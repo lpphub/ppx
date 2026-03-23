@@ -24,24 +24,23 @@ Generated Project Structure:
   myapp/
   ├── config/
   │   └── config.yml
-  ├── internal/
-  │   ├── modules/
-  │   │   ├── core/          # Module interface & contracts
-  │   │   ├── auth/          # Authentication module
-  │   │   ├── user/          # User module
-  │   │   └── post/          # Demo post module (CRUD example)
-  │   ├── infra/
-  │   │   ├── dbs.go
-  │   │   └── jwt/
-  │   ├── server/
-  │   │   ├── app.go
-  │   │   ├── helper/
-  │   │   └── middleware/
-  │   └── shared/
-  │       ├── consts/
-  │       ├── errs/
-  │       ├── pagination/
-  │       └── strutils/
+  ├── modules/
+  │   ├── core/          # Module interface & contracts
+  │   ├── auth/          # Authentication module
+  │   ├── user/          # User module
+  │   └── post/          # Demo post module (CRUD example)
+  ├── infra/
+  │   ├── dbs.go
+  │   └── jwt/
+  ├── server/
+  │   ├── app.go
+  │   ├── helper/
+  │   └── middleware/
+  ├── shared/
+  │   ├── consts/
+  │   ├── errs/
+  │   ├── pagination/
+  │   └── strutils/
   ├── main.go
   ├── go.mod
   ├── Makefile
