@@ -6,17 +6,27 @@ import (
 
 var rootCmd = &cobra.Command{
 	Use:   "ppx",
-	Short: "A CLI tool for Go web project scaffolding",
-	Long: `ppx is a command-line tool that helps you quickly create Go web project 
-structures with modular architecture, including user authentication, 
-and a demo CRUD module.
+	Short: "Go web project scaffolding CLI",
+	Long: `ppx is a CLI tool for generating Go web projects with modular architecture.
 
-Project Structure:
-  - Modular architecture with module/, module/contract/, infra/, server/, shared/
-  - Built-in user and auth modules
-  - Demo post module with full CRUD operations
-  - JWT authentication middleware
-  - Clean architecture with repository, service, handler layers`,
+Features:
+  - Modular design: each module implements core.Module interface
+  - Clean layered architecture: Handler → Service → Repository
+  - Built-in JWT authentication with login/register/refresh
+  - Demo CRUD module (post) showing best practices
+  - Graceful shutdown, health check, and metrics endpoints
+
+Generated Structure:
+  config/       - YAML configuration (DB, Redis, JWT, Server)
+  modules/      - Business modules (auth, user, post, core)
+  infra/        - Infrastructure (DB connections, JWT utils)
+  server/       - HTTP server, middleware, helpers
+  shared/       - Shared utilities (errors, pagination, contracts)
+
+Commands:
+  ppx new [name]      Create a new project
+  ppx module [name]   Add a new CRUD module to existing project
+  ppx version         Show version info`,
 	CompletionOptions: cobra.CompletionOptions{
 		DisableDefaultCmd: true,
 	},

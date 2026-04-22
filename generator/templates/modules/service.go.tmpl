@@ -1,4 +1,4 @@
-// module/{{.ModuleName}}/service.go
+// modules/{{.ModuleName}}/service.go
 package {{.ModuleName}}
 
 import (
@@ -9,10 +9,10 @@ import (
 )
 
 type Service struct {
-	repo *Repository
+	repo *Repo
 }
 
-func NewService(repo *Repository) *Service {
+func NewService(repo *Repo) *Service {
 	return &Service{repo: repo}
 }
 

@@ -1,4 +1,4 @@
-// module/{{.ModuleName}}/repository.go
+// modules/{{.ModuleName}}/repo.go
 package {{.ModuleName}}
 
 import (
@@ -8,17 +8,17 @@ import (
 	"gorm.io/gorm"
 )
 
-type Repository struct {
+type Repo struct {
 	*dbx.BaseRepo[{{.StructName}}]
 }
 
-func NewRepository(db *gorm.DB) *Repository {
-	return &Repository{
+func NewRepo(db *gorm.DB) *Repo {
+	return &Repo{
 		BaseRepo: dbx.NewBaseRepo[{{.StructName}}](db),
 	}
 }
 
-func (r *Repository) FindAll(ctx context.Context, page, pageSize int) ([]{{.StructName}}, int64, error) {
+func (r *Repo) FindAll(ctx context.Context, page, pageSize int) ([]{{.StructName}}, int64, error) {
 	var items []{{.StructName}}
 	var total int64
 

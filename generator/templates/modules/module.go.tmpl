@@ -1,10 +1,10 @@
-// module/{{.ModuleName}}/init.go
+// modules/{{.ModuleName}}/module.go
 package {{.ModuleName}}
 
 import (
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
-	"{{.ModuleName}}/server/core"
+	"{{.ProjectModule}}/modules/core"
 )
 
 var _ core.Module = (*Module)(nil)
@@ -14,8 +14,8 @@ type Module struct {
 	handler *Handler
 }
 
-func Init(db *gorm.DB) *Module {
-	repo := NewRepository(db)
+func New(db *gorm.DB) *Module {
+	repo := NewRepo(db)
 	svc := NewService(repo)
 	h := NewHandler(svc)
 

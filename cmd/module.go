@@ -18,21 +18,21 @@ var moduleCmd = &cobra.Command{
 	Short: "Create a new module in an existing project",
 	Long: `Create a new module with full CRUD structure in an existing project.
 
-The module will be created in the 'module/' directory with:
-  - init.go       - Module initialization and route registration
+The module will be created in the 'modules/' directory with:
+  - module.go     - Module initialization and route registration
   - model.go      - Database model
   - dto.go        - Data transfer objects (request/response)
   - handler.go    - HTTP handlers
   - service.go    - Business logic
-  - repository.go - Database operations
+  - repo.go       - Database operations
 
 Examples:
   ppx module product
-  ppx module order --with-repo
+  ppx module order
 
 After creating the module, you need to:
   1. Import the module in server/app.go
-  2. Initialize the module in initModules()
+  2. Initialize the module in registerModules()
   3. Run 'go mod tidy' to download dependencies`,
 	Args: cobra.ExactArgs(1),
 	Run:  runModule,
@@ -47,30 +47,52 @@ func runModule(cmd *cobra.Command, args []string) {
 		os.Exit(1)
 	}
 
-	modulePath := filepath.Join("module", moduleName)
+	modulePath := filepath.Join("modules", moduleName)
 	if _, err := os.Stat(modulePath); err == nil {
 		color.Red("❌ Module '%s' already exists", moduleName)
 		color.Yellow("💡 Please choose a different module name")
 		os.Exit(1)
 	}
 
-	moduleDir := "module"
+	moduleDir := "modules"
 	if _, err := os.Stat(moduleDir); os.IsNotExist(err) {
-		color.Red("❌ 'module' directory not found")
+		color.Red("❌ 'modules' directory not found")
 		color.Yellow("💡 Please run this command in a ppx-generated project root directory")
+		os.Exit(1)
+	}
+
+	projectModule := getProjectModule()
+	if projectModule == "" {
+		color.Red("❌ Could not read project module from go.mod")
+		color.Yellow("💡 Make sure go.mod exists in the current directory")
 		os.Exit(1)
 	}
 
 	moduleName = strings.ToLower(moduleName)
 	structName := toCamelCase(moduleName)
 
-	if err := generator.CreateModule(moduleName, structName); err != nil {
+	if err := generator.CreateModule(moduleName, structName, projectModule); err != nil {
 		color.Red("❌ Failed to create module '%s'", moduleName)
 		color.Yellow("💡 Error details: %v", err)
 		os.Exit(1)
 	}
 
-	printModuleSuccess(moduleName)
+	printModuleSuccess(moduleName, projectModule)
+}
+
+func getProjectModule() string {
+	content, err := os.ReadFile("go.mod")
+	if err != nil {
+		return ""
+	}
+	lines := strings.Split(string(content), "\n")
+	for _, line := range lines {
+		line = strings.TrimSpace(line)
+		if strings.HasPrefix(line, "module ") {
+			return strings.TrimSpace(strings.TrimPrefix(line, "module "))
+		}
+	}
+	return ""
 }
 
 func validateModuleName(name string) error {
@@ -96,21 +118,21 @@ func toCamelCase(s string) string {
 	return strings.Join(parts, "")
 }
 
-func printModuleSuccess(moduleName string) {
+func printModuleSuccess(moduleName, projectModule string) {
 	color.Green("\n✓ Module '%s' created successfully!", moduleName)
 	color.Cyan("\n📂 Generated files:")
-	fmt.Printf("   module/%s/\n", moduleName)
-	fmt.Printf("   ├── init.go\n")
+	fmt.Printf("   modules/%s/\n", moduleName)
+	fmt.Printf("   ├── module.go\n")
 	fmt.Printf("   ├── model.go\n")
 	fmt.Printf("   ├── dto.go\n")
 	fmt.Printf("   ├── handler.go\n")
 	fmt.Printf("   ├── service.go\n")
-	fmt.Printf("   └── repository.go\n")
+	fmt.Printf("   └── repo.go\n")
 
 	color.Yellow("\n⚠ Next steps:")
-	fmt.Printf("   1. Add import \"%s/module/%s\" to server/app.go\n", "<module-name>", moduleName)
-	fmt.Printf("   2. Initialize the module in initModules():\n")
-	fmt.Printf("      %sMod := %s.Init(infra.DB)\n", moduleName, toCamelCase(moduleName))
+	fmt.Printf("   1. Add import \"%s/modules/%s\" to server/app.go\n", projectModule, moduleName)
+	fmt.Printf("   2. Initialize the module in registerModules():\n")
+	fmt.Printf("      %sMod := %s.New(infra.DB)\n", moduleName, toCamelCase(moduleName))
 	fmt.Printf("   3. Add to the modules slice: %sMod\n", moduleName)
 	fmt.Printf("   4. Run: go mod tidy && go run .\n")
 

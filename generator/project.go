@@ -3,8 +3,10 @@ package generator
 import (
 	"embed"
 	"fmt"
+	"io/fs"
 	"os"
 	"path/filepath"
+	"strings"
 	"text/template"
 	"time"
 
@@ -85,45 +87,9 @@ func createDirectories(projectName string) error {
 }
 
 func processTemplates(projectName string, data TemplateData, bar *progressbar.ProgressBar) error {
-	templates := map[string]string{
-		"templates/main.go.tmpl":                     "main.go",
-		"templates/go.mod.tmpl":                      "go.mod",
-		"templates/Makefile.tmpl":                    "Makefile",
-		"templates/Dockerfile.tmpl":                  "Dockerfile",
-		"templates/gitignore.tmpl":                   ".gitignore",
-		"templates/env.example.tmpl":                 ".env.example",
-		"templates/config/config.yml.tmpl":           "config/config.yml",
-		"templates/infra/init.go.tmpl":               "infra/init.go",
-		"templates/infra/config.go.tmpl":             "infra/config.go",
-		"templates/infra/dbs.go.tmpl":                "infra/dbs.go",
-		"templates/infra/jwt/jwt.go.tmpl":            "infra/jwt/jwt.go",
-		"templates/server/app.go.tmpl":               "server/app.go",
-		"templates/server/helper/response.go.tmpl":   "server/helper/response.go",
-		"templates/server/middleware/auth.go.tmpl":   "server/middleware/auth.go",
-		"templates/server/middleware/cors.go.tmpl":   "server/middleware/cors.go",
-		"templates/shared/consts/constants.go.tmpl":  "shared/consts/constants.go",
-		"templates/shared/contracts/user.go.tmpl":    "shared/contracts/user.go",
-		"templates/shared/errs/errors.go.tmpl":       "shared/errs/errors.go",
-		"templates/shared/pagination/cursor.go.tmpl": "shared/pagination/cursor.go",
-		"templates/shared/pagination/offset.go.tmpl": "shared/pagination/offset.go",
-		"templates/shared/strutils/string.go.tmpl":   "shared/strutils/string.go",
-		"templates/modules/core/module.go.tmpl":      "modules/core/module.go",
-		"templates/modules/user/module.go.tmpl":      "modules/user/module.go",
-		"templates/modules/user/model.go.tmpl":       "modules/user/model.go",
-		"templates/modules/user/dto.go.tmpl":         "modules/user/dto.go",
-		"templates/modules/user/handler.go.tmpl":     "modules/user/handler.go",
-		"templates/modules/user/service.go.tmpl":     "modules/user/service.go",
-		"templates/modules/user/repo.go.tmpl":        "modules/user/repo.go",
-		"templates/modules/auth/module.go.tmpl":      "modules/auth/module.go",
-		"templates/modules/auth/dto.go.tmpl":         "modules/auth/dto.go",
-		"templates/modules/auth/handler.go.tmpl":     "modules/auth/handler.go",
-		"templates/modules/auth/service.go.tmpl":     "modules/auth/service.go",
-		"templates/modules/post/module.go.tmpl":      "modules/post/module.go",
-		"templates/modules/post/model.go.tmpl":       "modules/post/model.go",
-		"templates/modules/post/dto.go.tmpl":         "modules/post/dto.go",
-		"templates/modules/post/handler.go.tmpl":     "modules/post/handler.go",
-		"templates/modules/post/service.go.tmpl":     "modules/post/service.go",
-		"templates/modules/post/repo.go.tmpl":        "modules/post/repo.go",
+	templates, err := discoverProjectTemplates()
+	if err != nil {
+		return fmt.Errorf("failed to discover templates: %w", err)
 	}
 
 	templateCount := len(templates)
@@ -141,6 +107,55 @@ func processTemplates(projectName string, data TemplateData, bar *progressbar.Pr
 	}
 
 	return nil
+}
+
+func discoverProjectTemplates() (map[string]string, error) {
+	templates := make(map[string]string)
+
+	err := fs.WalkDir(templateFS, "templates", func(path string, d fs.DirEntry, err error) error {
+		if err != nil {
+			return err
+		}
+
+		if d.IsDir() {
+			return nil
+		}
+
+		if !strings.HasSuffix(path, ".tmpl") {
+			return nil
+		}
+
+		dir := filepath.Dir(path)
+		if dir == "templates/modules" {
+			return nil
+		}
+
+		outputPath := templateToOutputPath(path)
+		templates[path] = outputPath
+
+		return nil
+	})
+
+	return templates, err
+}
+
+func templateToOutputPath(templatePath string) string {
+	relPath := strings.TrimPrefix(templatePath, "templates/")
+	outputPath := strings.TrimSuffix(relPath, ".tmpl")
+
+	baseName := filepath.Base(outputPath)
+	dir := filepath.Dir(outputPath)
+
+	dotfiles := map[string]bool{
+		"gitignore":   true,
+		"env.example": true,
+	}
+
+	if dotfiles[baseName] && dir == "." {
+		return "." + baseName
+	}
+
+	return outputPath
 }
 
 func processTemplate(templatePath, outputPath string, data interface{}) error {

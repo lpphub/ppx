@@ -8,32 +8,34 @@ import (
 	"text/template"
 )
 
-//go:embed templates/modules/*.tmpl
+//go:embed templates/modules/*.tmpl templates/modules/core/module.go.tmpl
 var moduleTemplateFS embed.FS
 
 type ModuleData struct {
-	ModuleName string
-	StructName string
+	ModuleName    string
+	StructName    string
+	ProjectModule string
 }
 
-func CreateModule(moduleName, structName string) error {
-	modulePath := filepath.Join("module", moduleName)
+func CreateModule(moduleName, structName, projectModule string) error {
+	modulePath := filepath.Join("modules", moduleName)
 	if err := os.MkdirAll(modulePath, 0755); err != nil {
 		return fmt.Errorf("failed to create module directory: %w", err)
 	}
 
 	data := ModuleData{
-		ModuleName: moduleName,
-		StructName: structName,
+		ModuleName:    moduleName,
+		StructName:    structName,
+		ProjectModule: projectModule,
 	}
 
 	files := map[string]string{
-		"init.go.tmpl":       "init.go",
+		"module.go.tmpl":     "module.go",
 		"model.go.tmpl":      "model.go",
 		"dto.go.tmpl":        "dto.go",
 		"handler.go.tmpl":    "handler.go",
 		"service.go.tmpl":    "service.go",
-		"repository.go.tmpl": "repository.go",
+		"repo.go.tmpl":       "repo.go",
 	}
 
 	for templateName, outputName := range files {
