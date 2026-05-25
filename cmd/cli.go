@@ -7,21 +7,24 @@ import (
 var rootCmd = &cobra.Command{
 	Use:   "ppx",
 	Short: "Go web project scaffolding CLI",
-	Long: `ppx is a CLI tool for generating Go web projects with modular architecture.
+	Long: `ppx is a CLI tool for generating Go web projects with MVC architecture.
 
 Features:
-  - Modular design: each module implements core.Module interface
-  - Clean layered architecture: Handler → Service → Repository
+  - MVC architecture: handler → service → repository
+  - Centralized route registration in routes/
   - Built-in JWT authentication with login/register/refresh
   - Demo CRUD module (post) showing best practices
   - Graceful shutdown, health check, and metrics endpoints
 
 Generated Structure:
-  config/       - YAML configuration (DB, Redis, JWT, Server)
-  modules/      - Business modules (auth, user, post, core)
-  infra/        - Infrastructure (DB connections, JWT utils)
-  server/       - HTTP server, middleware, helpers
-  shared/       - Shared utilities (errors, pagination, contracts)
+  handler/      - HTTP handlers
+  service/      - Business logic
+  repository/   - Data access
+  types/        - Models & DTOs
+  routes/       - Route registration
+  middleware/   - HTTP middleware
+  shared/       - Common utilities
+  infra/        - Infrastructure (DB, Redis, JWT)
 
 Commands:
   ppx new [name]      Create a new project

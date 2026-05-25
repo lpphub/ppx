@@ -61,19 +61,15 @@ func CreateProject(projectName, moduleName string) error {
 
 func createDirectories(projectName string) error {
 	directories := []string{
-		"config",
+		"handler",
+		"repository",
+		"service",
+		"types",
+		"types/models",
+		"routes",
+		"middleware",
+		"shared",
 		"infra/jwt",
-		"modules/core",
-		"modules/auth",
-		"modules/user",
-		"modules/post",
-		"server/helper",
-		"server/middleware",
-		"shared/consts",
-		"shared/contracts",
-		"shared/errs",
-		"shared/pagination",
-		"shared/strutils",
 	}
 
 	for _, dir := range directories {
@@ -125,8 +121,7 @@ func discoverProjectTemplates() (map[string]string, error) {
 			return nil
 		}
 
-		dir := filepath.Dir(path)
-		if dir == "templates/modules" {
+		if strings.Contains(path, "module-tmpl") {
 			return nil
 		}
 
@@ -187,25 +182,38 @@ func printSuccess(projectName string) {
 
 	color.Cyan("\n📂 Generated directory structure:")
 	fmt.Printf("   %s/\n", projectName)
-	fmt.Printf("   ├── config/\n")
-	fmt.Printf("   │   └── config.yml\n")
-	fmt.Printf("   ├── modules/\n")
-	fmt.Printf("   │   ├── core/        # Module interface\n")
-	fmt.Printf("   │   ├── auth/        # Authentication module\n")
-	fmt.Printf("   │   ├── user/        # User module\n")
-	fmt.Printf("   │   └── post/        # Demo CRUD module\n")
-	fmt.Printf("   ├── infra/\n")
+	fmt.Printf("   ├── handler/             # Request handlers (controllers)\n")
+	fmt.Printf("   │   ├── auth.go\n")
+	fmt.Printf("   │   ├── user.go\n")
+	fmt.Printf("   │   └── post.go\n")
+	fmt.Printf("   ├── repository/          # Data access layer\n")
+	fmt.Printf("   │   ├── user.go\n")
+	fmt.Printf("   │   └── post.go\n")
+	fmt.Printf("   ├── types/               # Models & DTOs\n")
+	fmt.Printf("   │   ├── models/          # Database models\n")
+	fmt.Printf("   │   │   ├── user.go\n")
+	fmt.Printf("   │   │   └── post.go\n")
+	fmt.Printf("   │   ├── user.go          # User DTO\n")
+	fmt.Printf("   │   ├── post.go          # Post DTO\n")
+	fmt.Printf("   │   └── auth.go          # Auth DTO\n")
+	fmt.Printf("   ├── service/             # Business logic\n")
+	fmt.Printf("   │   ├── auth.go\n")
+	fmt.Printf("   │   ├── user.go\n")
+	fmt.Printf("   │   └── post.go\n")
+	fmt.Printf("   ├── routes/              # Route registration\n")
+	fmt.Printf("   │   ├── routes.go\n")
+	fmt.Printf("   │   └── container.go\n")
+	fmt.Printf("   ├── middleware/           # HTTP middleware\n")
+	fmt.Printf("   │   ├── auth.go\n")
+	fmt.Printf("   │   └── cors.go\n")
+	fmt.Printf("   ├── shared/              # Common utilities\n")
+	fmt.Printf("   │   ├── errs.go\n")
+	fmt.Printf("   │   └── response.go\n")
+	fmt.Printf("   ├── infra/               # Infrastructure (DB, Redis, JWT)\n")
+	fmt.Printf("   │   ├── config.go\n")
 	fmt.Printf("   │   ├── dbs.go\n")
 	fmt.Printf("   │   └── jwt/\n")
-	fmt.Printf("   ├── server/\n")
-	fmt.Printf("   │   ├── helper/\n")
-	fmt.Printf("   │   └── middleware/\n")
-	fmt.Printf("   ├── shared/\n")
-	fmt.Printf("   │   ├── consts/\n")
-	fmt.Printf("   │   ├── contracts/   # Module contracts\n")
-	fmt.Printf("   │   ├── errs/\n")
-	fmt.Printf("   │   ├── pagination/\n")
-	fmt.Printf("   │   └── strutils/\n")
+	fmt.Printf("   ├── config.yml\n")
 	fmt.Printf("   ├── main.go\n")
 	fmt.Printf("   ├── go.mod\n")
 	fmt.Printf("   ├── Makefile\n")
@@ -213,13 +221,13 @@ func printSuccess(projectName string) {
 
 	color.Cyan("\n📋 Next steps:")
 	fmt.Printf("   1. cd %s\n", projectName)
-	fmt.Printf("   2. Update config/config.yml with your database credentials\n")
+	fmt.Printf("   2. Update config.yml with your database credentials\n")
 	fmt.Printf("   3. mv .env.example .env && edit .env for local development\n")
 	fmt.Printf("   4. go mod tidy\n")
 	fmt.Printf("   5. go run .\n")
 
 	color.Yellow("\n⚠ Don't forget:")
-	fmt.Printf("   - Update config/config.yml (Database, Redis, JWT settings)\n")
+	fmt.Printf("   - Update config.yml (Database, Redis, JWT settings)\n")
 	fmt.Printf("   - Default server port: 8080\n")
 
 	color.Cyan("\n📚 Documentation: https://github.com/lpphub/ppx\n")

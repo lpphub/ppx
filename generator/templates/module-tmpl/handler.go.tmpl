@@ -1,0 +1,102 @@
+package handler
+
+import (
+	"strconv"
+
+	"{{.ProjectModule}}/shared"
+	"{{.ProjectModule}}/middleware"
+	"{{.ProjectModule}}/service"
+
+	"github.com/gin-gonic/gin"
+)
+
+type {{.StructName}}Handler struct {
+	svc *service.{{.StructName}}Service
+}
+
+func New{{.StructName}}Handler(svc *service.{{.StructName}}Service) *{{.StructName}}Handler {
+	return &{{.StructName}}Handler{svc: svc}
+}
+
+func (h *{{.StructName}}Handler) RegisterRoutes(r *gin.RouterGroup) {
+	group := r.Group("/{{.ModuleName}}s")
+	{
+		group.GET("", h.List)
+		group.GET("/:id", h.Get)
+		group.POST("", middleware.JwtAuth(), h.Create)
+		group.PUT("/:id", middleware.JwtAuth(), h.Update)
+		group.DELETE("/:id", middleware.JwtAuth(), h.Delete)
+	}
+}
+
+func (h *{{.StructName}}Handler) Create(c *gin.Context) {
+	userID, ok := shared.MustGetUserID(c)
+	if !ok {
+		return
+	}
+
+	var req Create{{.StructName}}Req
+	if !shared.MustBindJSON(c, &req) {
+		return
+	}
+
+	resp, err := h.svc.Create(c, req.Title, req.Content)
+	shared.Respond(c, err, resp)
+}
+
+func (h *{{.StructName}}Handler) List(c *gin.Context) {
+	page, _ := strconv.Atoi(c.DefaultQuery("page", "1"))
+	pageSize, _ := strconv.Atoi(c.DefaultQuery("pageSize", "10"))
+
+	list, total, err := h.svc.List(c, page, pageSize)
+	shared.Respond(c, err, gin.H{
+		"list":     list,
+		"total":    total,
+		"page":     page,
+		"pageSize": pageSize,
+	})
+}
+
+func (h *{{.StructName}}Handler) Get(c *gin.Context) {
+	id, ok := shared.MustParseUintParam(c, "id")
+	if !ok {
+		return
+	}
+	resp, err := h.svc.Get(c, id)
+	shared.Respond(c, err, resp)
+}
+
+func (h *{{.StructName}}Handler) Update(c *gin.Context) {
+	id, ok := shared.MustParseUintParam(c, "id")
+	if !ok {
+		return
+	}
+	var req Update{{.StructName}}Req
+	if !shared.MustBindJSON(c, &req) {
+		return
+	}
+	err := h.svc.Update(c, id, req.Title, req.Content, req.Status)
+	shared.Respond(c, err, gin.H{"message": "updated"})
+}
+
+func (h *{{.StructName}}Handler) Delete(c *gin.Context) {
+	id, ok := shared.MustParseUintParam(c, "id")
+	if !ok {
+		return
+	}
+	err := h.svc.Delete(c, id)
+	shared.Respond(c, err, gin.H{"message": "deleted"})
+}
+
+// --- DTO ---
+
+type Create{{.StructName}}Req struct {
+	Title   string `json:"title" binding:"required"`
+	Content string `json:"content"`
+}
+
+type Update{{.StructName}}Req struct {
+	Title   string `json:"title"`
+	Content string `json:"content"`
+	Status  *int8  `json:"status"`
+}

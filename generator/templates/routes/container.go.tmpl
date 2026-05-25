@@ -1,0 +1,47 @@
+package routes
+
+import (
+	"{{.ModuleName}}/handler"
+	"{{.ModuleName}}/infra"
+	"{{.ModuleName}}/repository"
+	"{{.ModuleName}}/service"
+)
+
+type Container struct {
+	// repository
+	UserRepo *repository.UserRepo
+	PostRepo *repository.PostRepo
+
+	// service
+	AuthService *service.AuthService
+	UserService *service.UserService
+	PostService *service.PostService
+
+	// handler
+	AuthHandler *handler.AuthHandler
+	UserHandler *handler.UserHandler
+	PostHandler *handler.PostHandler
+}
+
+func NewContainer() *Container {
+	// repo
+	userRepo := repository.NewUserRepo(infra.DB)
+	postRepo := repository.NewPostRepo(infra.DB)
+
+	// service
+	userSvc := service.NewUserService(userRepo)
+	authSvc := service.NewAuthService(userRepo)
+	postSvc := service.NewPostService(postRepo)
+
+	// handler
+	return &Container{
+		UserRepo:    userRepo,
+		PostRepo:    postRepo,
+		AuthService: authSvc,
+		UserService: userSvc,
+		PostService: postSvc,
+		AuthHandler: handler.NewAuthHandler(authSvc),
+		UserHandler: handler.NewUserHandler(userSvc),
+		PostHandler: handler.NewPostHandler(postSvc),
+	}
+}

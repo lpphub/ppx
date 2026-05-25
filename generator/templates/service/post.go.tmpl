@@ -1,0 +1,89 @@
+package service
+
+import (
+	"context"
+	"time"
+
+	"{{.ModuleName}}/repository"
+	"{{.ModuleName}}/types"
+	"{{.ModuleName}}/types/models"
+)
+
+type PostService struct {
+	repo *repository.PostRepo
+}
+
+func NewPostService(repo *repository.PostRepo) *PostService {
+	return &PostService{repo: repo}
+}
+
+func (s *PostService) Create(ctx context.Context, userID uint, title, content string) (*types.PostDTO, error) {
+	item := &models.Post{
+		Title:     title,
+		Content:   content,
+		Status:    1,
+		CreatedAt: time.Now(),
+		UpdatedAt: time.Now(),
+	}
+
+	if err := s.repo.Create(ctx, item); err != nil {
+		return nil, err
+	}
+
+	return toPostDTO(item), nil
+}
+
+func (s *PostService) List(ctx context.Context, page, pageSize int) ([]types.PostDTO, int64, error) {
+	items, total, err := s.repo.FindAll(ctx, page, pageSize)
+	if err != nil {
+		return nil, 0, err
+	}
+
+	var dtos []types.PostDTO
+	for _, item := range items {
+		dtos = append(dtos, *toPostDTO(&item))
+	}
+
+	return dtos, total, nil
+}
+
+func (s *PostService) Get(ctx context.Context, id uint) (*types.PostDTO, error) {
+	item, err := s.repo.First(ctx, id)
+	if err != nil {
+		return nil, err
+	}
+
+	return toPostDTO(item), nil
+}
+
+func (s *PostService) Update(ctx context.Context, id uint, title, content string, status *int8) error {
+	updates := map[string]interface{}{
+		"updated_at": time.Now(),
+	}
+	if title != "" {
+		updates["title"] = title
+	}
+	if content != "" {
+		updates["content"] = content
+	}
+	if status != nil {
+		updates["status"] = *status
+	}
+
+	return s.repo.Update(ctx, id, updates)
+}
+
+func (s *PostService) Delete(ctx context.Context, id uint) error {
+	return s.repo.Delete(ctx, id)
+}
+
+func toPostDTO(item *models.Post) *types.PostDTO {
+	return &types.PostDTO{
+		ID:        item.ID,
+		Title:     item.Title,
+		Content:   item.Content,
+		Status:    item.Status,
+		CreatedAt: item.CreatedAt,
+		UpdatedAt: item.UpdatedAt,
+	}
+}

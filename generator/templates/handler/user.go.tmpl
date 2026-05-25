@@ -1,0 +1,97 @@
+package handler
+
+import (
+	"strconv"
+
+	"{{.ModuleName}}/shared"
+	"{{.ModuleName}}/middleware"
+	"{{.ModuleName}}/service"
+
+	"github.com/gin-gonic/gin"
+)
+
+type UserHandler struct {
+	svc *service.UserService
+}
+
+func NewUserHandler(svc *service.UserService) *UserHandler {
+	return &UserHandler{svc: svc}
+}
+
+func (h *UserHandler) RegisterRoutes(r *gin.RouterGroup) {
+	group := r.Group("/users")
+	{
+		group.GET("", h.List)
+		group.GET("/:id", h.Get)
+		group.POST("", middleware.JwtAuth(), h.Create)
+		group.PUT("/:id", middleware.JwtAuth(), h.Update)
+		group.DELETE("/:id", middleware.JwtAuth(), h.Delete)
+	}
+}
+
+func (h *UserHandler) Create(c *gin.Context) {
+	var req CreateUserReq
+	if !shared.MustBindJSON(c, &req) {
+		return
+	}
+	resp, err := h.svc.Create(c, req.Email, req.Password, req.Name)
+	shared.Respond(c, err, resp)
+}
+
+func (h *UserHandler) List(c *gin.Context) {
+	page, _ := strconv.Atoi(c.DefaultQuery("page", "1"))
+	pageSize, _ := strconv.Atoi(c.DefaultQuery("pageSize", "10"))
+
+	list, total, err := h.svc.List(c, page, pageSize)
+	shared.Respond(c, err, gin.H{
+		"list":     list,
+		"total":    total,
+		"page":     page,
+		"pageSize": pageSize,
+	})
+}
+
+func (h *UserHandler) Get(c *gin.Context) {
+	id, ok := shared.MustParseUintParam(c, "id")
+	if !ok {
+		return
+	}
+	resp, err := h.svc.Get(c, id)
+	shared.Respond(c, err, resp)
+}
+
+func (h *UserHandler) Update(c *gin.Context) {
+	id, ok := shared.MustParseUintParam(c, "id")
+	if !ok {
+		return
+	}
+	var req UpdateUserReq
+	if !shared.MustBindJSON(c, &req) {
+		return
+	}
+	err := h.svc.Update(c, id, req.Name, req.Email, req.Status)
+	shared.Respond(c, err, gin.H{"message": "updated"})
+}
+
+func (h *UserHandler) Delete(c *gin.Context) {
+	id, ok := shared.MustParseUintParam(c, "id")
+	if !ok {
+		return
+	}
+	err := h.svc.Delete(c, id)
+	shared.Respond(c, err, gin.H{"message": "deleted"})
+}
+
+// --- DTO ---
+
+type CreateUserReq struct {
+	Email    string `json:"email" binding:"required,email"`
+	Password string `json:"password" binding:"required,min=6"`
+	Name     string `json:"name"`
+}
+
+type UpdateUserReq struct {
+	Name   string `json:"name"`
+	Email  string `json:"email"`
+	Status *int8  `json:"status"`
+}

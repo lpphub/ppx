@@ -1,0 +1,27 @@
+package routes
+
+import (
+	"{{.ModuleName}}/middleware"
+
+	"github.com/gin-gonic/gin"
+	"github.com/lpphub/goweb/ext/logx"
+	"github.com/lpphub/goweb/monitor"
+)
+
+func Setup(r *gin.Engine) {
+	c := NewContainer()
+
+	r.Use(gin.Recovery())
+	r.Use(logx.GinAccessLog(logx.WithSkipPaths("/metrics", "/health")))
+	r.Use(middleware.Cors())
+
+	monitor.RegisterMetrics(r)
+	r.GET("/health", func(ctx *gin.Context) {
+		ctx.JSON(200, gin.H{"status": "ok"})
+	})
+
+	g := r.Group("")
+	c.AuthHandler.RegisterRoutes(g)
+	c.UserHandler.RegisterRoutes(g)
+	c.PostHandler.RegisterRoutes(g)
+}

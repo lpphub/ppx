@@ -1,0 +1,12 @@
+package types
+
+import "time"
+
+type UserDTO struct {
+	ID        uint      `json:"id"`
+	Email     string    `json:"email"`
+	Name      string    `json:"name"`
+	Status    int8      `json:"status"`
+	CreatedAt time.Time `json:"createdAt"`
+	UpdatedAt time.Time `json:"updatedAt"`
+}

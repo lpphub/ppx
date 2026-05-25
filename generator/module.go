@@ -8,7 +8,7 @@ import (
 	"text/template"
 )
 
-//go:embed templates/modules/*.tmpl templates/modules/core/module.go.tmpl
+//go:embed templates/module-tmpl/*.tmpl
 var moduleTemplateFS embed.FS
 
 type ModuleData struct {
@@ -18,48 +18,66 @@ type ModuleData struct {
 }
 
 func CreateModule(moduleName, structName, projectModule string) error {
-	modulePath := filepath.Join("modules", moduleName)
-	if err := os.MkdirAll(modulePath, 0755); err != nil {
-		return fmt.Errorf("failed to create module directory: %w", err)
-	}
-
 	data := ModuleData{
 		ModuleName:    moduleName,
 		StructName:    structName,
 		ProjectModule: projectModule,
 	}
 
-	files := map[string]string{
-		"module.go.tmpl":     "module.go",
-		"model.go.tmpl":      "model.go",
-		"dto.go.tmpl":        "dto.go",
-		"handler.go.tmpl":    "handler.go",
-		"service.go.tmpl":    "service.go",
-		"repo.go.tmpl":       "repo.go",
+	// handler
+	if err := generateModuleFile(data, "handler.go.tmpl",
+		filepath.Join("handler", moduleName+".go")); err != nil {
+		return err
 	}
 
-	for templateName, outputName := range files {
-		templateContent, err := moduleTemplateFS.ReadFile("templates/modules/" + templateName)
-		if err != nil {
-			return fmt.Errorf("failed to read template %s: %w", templateName, err)
-		}
+	// types (model + dto)
+	if err := generateModuleFile(data, "model.go.tmpl",
+		filepath.Join("types", "models", moduleName+".go")); err != nil {
+		return err
+	}
+	if err := generateModuleFile(data, "dto.go.tmpl",
+		filepath.Join("types", moduleName+".go")); err != nil {
+		return err
+	}
 
-		tmpl, err := template.New(templateName).Parse(string(templateContent))
-		if err != nil {
-			return fmt.Errorf("failed to parse template %s: %w", templateName, err)
-		}
+	// repository
+	if err := generateModuleFile(data, "repo.go.tmpl",
+		filepath.Join("repository", moduleName+".go")); err != nil {
+		return err
+	}
 
-		outputPath := filepath.Join(modulePath, outputName)
-		file, err := os.Create(outputPath)
-		if err != nil {
-			return fmt.Errorf("failed to create file %s: %w", outputPath, err)
-		}
+	// service
+	if err := generateModuleFile(data, "service.go.tmpl",
+		filepath.Join("service", moduleName+".go")); err != nil {
+		return err
+	}
 
-		if err := tmpl.Execute(file, data); err != nil {
-			file.Close()
-			return fmt.Errorf("failed to execute template %s: %w", templateName, err)
-		}
-		file.Close()
+	return nil
+}
+
+func generateModuleFile(data ModuleData, templateName, outputPath string) error {
+	templateContent, err := moduleTemplateFS.ReadFile("templates/module-tmpl/" + templateName)
+	if err != nil {
+		return fmt.Errorf("failed to read template %s: %w", templateName, err)
+	}
+
+	tmpl, err := template.New(templateName).Parse(string(templateContent))
+	if err != nil {
+		return fmt.Errorf("failed to parse template %s: %w", templateName, err)
+	}
+
+	if err := os.MkdirAll(filepath.Dir(outputPath), 0755); err != nil {
+		return fmt.Errorf("failed to create directory: %w", err)
+	}
+
+	file, err := os.Create(outputPath)
+	if err != nil {
+		return fmt.Errorf("failed to create file %s: %w", outputPath, err)
+	}
+	defer file.Close()
+
+	if err := tmpl.Execute(file, data); err != nil {
+		return fmt.Errorf("failed to execute template %s: %w", templateName, err)
 	}
 
 	return nil

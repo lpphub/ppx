@@ -1,0 +1,102 @@
+package handler
+
+import (
+	"strconv"
+
+	"{{.ModuleName}}/shared"
+	"{{.ModuleName}}/middleware"
+	"{{.ModuleName}}/service"
+
+	"github.com/gin-gonic/gin"
+)
+
+type PostHandler struct {
+	svc *service.PostService
+}
+
+func NewPostHandler(svc *service.PostService) *PostHandler {
+	return &PostHandler{svc: svc}
+}
+
+func (h *PostHandler) RegisterRoutes(r *gin.RouterGroup) {
+	group := r.Group("/posts")
+	{
+		group.GET("", h.List)
+		group.GET("/:id", h.Get)
+		group.POST("", middleware.JwtAuth(), h.Create)
+		group.PUT("/:id", middleware.JwtAuth(), h.Update)
+		group.DELETE("/:id", middleware.JwtAuth(), h.Delete)
+	}
+}
+
+func (h *PostHandler) Create(c *gin.Context) {
+	userID, ok := shared.MustGetUserID(c)
+	if !ok {
+		return
+	}
+
+	var req CreatePostReq
+	if !shared.MustBindJSON(c, &req) {
+		return
+	}
+
+	resp, err := h.svc.Create(c, userID, req.Title, req.Content)
+	shared.Respond(c, err, resp)
+}
+
+func (h *PostHandler) List(c *gin.Context) {
+	page, _ := strconv.Atoi(c.DefaultQuery("page", "1"))
+	pageSize, _ := strconv.Atoi(c.DefaultQuery("pageSize", "10"))
+
+	list, total, err := h.svc.List(c, page, pageSize)
+	shared.Respond(c, err, gin.H{
+		"list":     list,
+		"total":    total,
+		"page":     page,
+		"pageSize": pageSize,
+	})
+}
+
+func (h *PostHandler) Get(c *gin.Context) {
+	id, ok := shared.MustParseUintParam(c, "id")
+	if !ok {
+		return
+	}
+	resp, err := h.svc.Get(c, id)
+	shared.Respond(c, err, resp)
+}
+
+func (h *PostHandler) Update(c *gin.Context) {
+	id, ok := shared.MustParseUintParam(c, "id")
+	if !ok {
+		return
+	}
+	var req UpdatePostReq
+	if !shared.MustBindJSON(c, &req) {
+		return
+	}
+	err := h.svc.Update(c, id, req.Title, req.Content, req.Status)
+	shared.Respond(c, err, gin.H{"message": "updated"})
+}
+
+func (h *PostHandler) Delete(c *gin.Context) {
+	id, ok := shared.MustParseUintParam(c, "id")
+	if !ok {
+		return
+	}
+	err := h.svc.Delete(c, id)
+	shared.Respond(c, err, gin.H{"message": "deleted"})
+}
+
+// --- DTO ---
+
+type CreatePostReq struct {
+	Title   string `json:"title" binding:"required"`
+	Content string `json:"content"`
+}
+
+type UpdatePostReq struct {
+	Title   string `json:"title"`
+	Content string `json:"content"`
+	Status  *int8  `json:"status"`
+}

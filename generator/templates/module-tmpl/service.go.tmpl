@@ -1,0 +1,89 @@
+package service
+
+import (
+	"context"
+	"time"
+
+	"{{.ProjectModule}}/repository"
+	"{{.ProjectModule}}/types"
+	"{{.ProjectModule}}/types/models"
+)
+
+type {{.StructName}}Service struct {
+	repo *repository.{{.StructName}}Repo
+}
+
+func New{{.StructName}}Service(repo *repository.{{.StructName}}Repo) *{{.StructName}}Service {
+	return &{{.StructName}}Service{repo: repo}
+}
+
+func (s *{{.StructName}}Service) Create(ctx context.Context, title, content string) (*types.{{.StructName}}DTO, error) {
+	item := &models.{{.StructName}}{
+		Title:     title,
+		Content:   content,
+		Status:    1,
+		CreatedAt: time.Now(),
+		UpdatedAt: time.Now(),
+	}
+
+	if err := s.repo.Create(ctx, item); err != nil {
+		return nil, err
+	}
+
+	return to{{.StructName}}DTO(item), nil
+}
+
+func (s *{{.StructName}}Service) List(ctx context.Context, page, pageSize int) ([]types.{{.StructName}}DTO, int64, error) {
+	items, total, err := s.repo.FindAll(ctx, page, pageSize)
+	if err != nil {
+		return nil, 0, err
+	}
+
+	var dtos []types.{{.StructName}}DTO
+	for _, item := range items {
+		dtos = append(dtos, *to{{.StructName}}DTO(&item))
+	}
+
+	return dtos, total, nil
+}
+
+func (s *{{.StructName}}Service) Get(ctx context.Context, id uint) (*types.{{.StructName}}DTO, error) {
+	item, err := s.repo.First(ctx, id)
+	if err != nil {
+		return nil, err
+	}
+
+	return to{{.StructName}}DTO(item), nil
+}
+
+func (s *{{.StructName}}Service) Update(ctx context.Context, id uint, title, content string, status *int8) error {
+	updates := map[string]interface{}{
+		"updated_at": time.Now(),
+	}
+	if title != "" {
+		updates["title"] = title
+	}
+	if content != "" {
+		updates["content"] = content
+	}
+	if status != nil {
+		updates["status"] = *status
+	}
+
+	return s.repo.Update(ctx, id, updates)
+}
+
+func (s *{{.StructName}}Service) Delete(ctx context.Context, id uint) error {
+	return s.repo.Delete(ctx, id)
+}
+
+func to{{.StructName}}DTO(item *models.{{.StructName}}) *types.{{.StructName}}DTO {
+	return &types.{{.StructName}}DTO{
+		ID:        item.ID,
+		Title:     item.Title,
+		Content:   item.Content,
+		Status:    item.Status,
+		CreatedAt: item.CreatedAt,
+		UpdatedAt: item.UpdatedAt,
+	}
+}

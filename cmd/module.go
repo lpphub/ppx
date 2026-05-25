@@ -3,7 +3,6 @@ package cmd
 import (
 	"fmt"
 	"os"
-	"path/filepath"
 	"regexp"
 	"strings"
 
@@ -18,22 +17,19 @@ var moduleCmd = &cobra.Command{
 	Short: "Create a new module in an existing project",
 	Long: `Create a new module with full CRUD structure in an existing project.
 
-The module will be created in the 'modules/' directory with:
-  - module.go     - Module initialization and route registration
-  - model.go      - Database model
-  - dto.go        - Data transfer objects (request/response)
-  - handler.go    - HTTP handlers
-  - service.go    - Business logic
-  - repo.go       - Database operations
+The module will be created across MVC directories:
+  - handler/<name>.go        - HTTP handlers + DTO
+  - repository/models/<name>.go - GORM model
+  - repository/<name>.go     - Database operations
+  - service/<name>.go        - Business logic
 
 Examples:
   ppx module product
   ppx module order
 
 After creating the module, you need to:
-  1. Import the module in server/app.go
-  2. Initialize the module in registerModules()
-  3. Run 'go mod tidy' to download dependencies`,
+  1. Add handler initialization in route/route.go
+  2. Run 'go mod tidy' to download dependencies`,
 	Args: cobra.ExactArgs(1),
 	Run:  runModule,
 }
@@ -47,16 +43,9 @@ func runModule(cmd *cobra.Command, args []string) {
 		os.Exit(1)
 	}
 
-	modulePath := filepath.Join("modules", moduleName)
-	if _, err := os.Stat(modulePath); err == nil {
-		color.Red("❌ Module '%s' already exists", moduleName)
-		color.Yellow("💡 Please choose a different module name")
-		os.Exit(1)
-	}
-
-	moduleDir := "modules"
-	if _, err := os.Stat(moduleDir); os.IsNotExist(err) {
-		color.Red("❌ 'modules' directory not found")
+	// Check if handler directory exists (indicates ppx-generated project)
+	if _, err := os.Stat("handler"); os.IsNotExist(err) {
+		color.Red("❌ 'handler' directory not found")
 		color.Yellow("💡 Please run this command in a ppx-generated project root directory")
 		os.Exit(1)
 	}
@@ -77,7 +66,7 @@ func runModule(cmd *cobra.Command, args []string) {
 		os.Exit(1)
 	}
 
-	printModuleSuccess(moduleName, projectModule)
+	printModuleSuccess(moduleName, structName, projectModule)
 }
 
 func getProjectModule() string {
@@ -118,23 +107,22 @@ func toCamelCase(s string) string {
 	return strings.Join(parts, "")
 }
 
-func printModuleSuccess(moduleName, projectModule string) {
+func printModuleSuccess(moduleName, structName, projectModule string) {
 	color.Green("\n✓ Module '%s' created successfully!", moduleName)
 	color.Cyan("\n📂 Generated files:")
-	fmt.Printf("   modules/%s/\n", moduleName)
-	fmt.Printf("   ├── module.go\n")
-	fmt.Printf("   ├── model.go\n")
-	fmt.Printf("   ├── dto.go\n")
-	fmt.Printf("   ├── handler.go\n")
-	fmt.Printf("   ├── service.go\n")
-	fmt.Printf("   └── repo.go\n")
+	fmt.Printf("   handler/%s.go\n", moduleName)
+	fmt.Printf("   types/models/%s.go\n", moduleName)
+	fmt.Printf("   types/%s.go\n", moduleName)
+	fmt.Printf("   repository/%s.go\n", moduleName)
+	fmt.Printf("   service/%s.go\n", moduleName)
 
 	color.Yellow("\n⚠ Next steps:")
-	fmt.Printf("   1. Add import \"%s/modules/%s\" to server/app.go\n", projectModule, moduleName)
-	fmt.Printf("   2. Initialize the module in registerModules():\n")
-	fmt.Printf("      %sMod := %s.New(infra.DB)\n", moduleName, toCamelCase(moduleName))
-	fmt.Printf("   3. Add to the modules slice: %sMod\n", moduleName)
-	fmt.Printf("   4. Run: go mod tidy && go run .\n")
+	fmt.Printf("   1. Add to route/route.go:\n")
+	fmt.Printf("      %sRepo := repository.New%sRepo(infra.DB)\n", moduleName, structName)
+	fmt.Printf("      %sSvc := service.New%sService(%sRepo)\n", moduleName, structName, moduleName)
+	fmt.Printf("      %sHandler := handler.New%sHandler(%sSvc)\n", moduleName, structName, moduleName)
+	fmt.Printf("      %sHandler.RegisterRoutes(group)\n", moduleName)
+	fmt.Printf("   2. Run: go mod tidy && go run .\n")
 
-	color.Cyan("\n📚 Routes will be available at: /api/%s", moduleName)
+	color.Cyan("\n📚 Routes will be available at: /%ss", moduleName)
 }

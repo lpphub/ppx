@@ -1,0 +1,15 @@
+package types
+
+type AuthUserDTO struct {
+	ID     uint   `json:"id"`
+	Name   string `json:"name"`
+	Email  string `json:"email"`
+	Avatar string `json:"avatar"`
+	Role   int8   `json:"role"`
+}
+
+type AuthDTO struct {
+	User         *AuthUserDTO `json:"user"`
+	AccessToken  string       `json:"accessToken"`
+	RefreshToken string       `json:"refreshToken"`
+}

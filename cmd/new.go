@@ -14,7 +14,7 @@ import (
 var newCmd = &cobra.Command{
 	Use:   "new [project-name]",
 	Short: "Create a new Go web project",
-	Long: `Create a new Go web project with modular architecture.
+	Long: `Create a new Go web project with MVC architecture.
 
 Examples:
   ppx new myapp
@@ -22,25 +22,15 @@ Examples:
 
 Generated Project Structure:
   myapp/
-  ├── config/
-  │   └── config.yml
-  ├── modules/
-  │   ├── core/          # Module interface & contracts
-  │   ├── auth/          # Authentication module
-  │   ├── user/          # User module
-  │   └── post/          # Demo post module (CRUD example)
-  ├── infra/
-  │   ├── dbs.go
-  │   └── jwt/
-  ├── server/
-  │   ├── app.go
-  │   ├── helper/
-  │   └── middleware/
-  ├── shared/
-  │   ├── consts/
-  │   ├── errs/
-  │   ├── pagination/
-  │   └── strutils/
+  ├── handler/             # Request handlers
+  ├── repository/          # Data access
+  ├── service/             # Business logic
+  ├── types/               # Models & DTOs
+  ├── routes/              # Route registration
+  ├── middleware/           # HTTP middleware
+  ├── shared/              # Common utilities
+  ├── infra/               # Infrastructure (DB, Redis, JWT)
+  ├── config.yml
   ├── main.go
   ├── go.mod
   ├── Makefile

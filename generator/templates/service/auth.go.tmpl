@@ -1,0 +1,84 @@
+package service
+
+import (
+	"context"
+	"fmt"
+
+	"{{.ModuleName}}/infra/jwt"
+	"{{.ModuleName}}/repository"
+	"{{.ModuleName}}/types"
+	"{{.ModuleName}}/types/models"
+)
+
+type AuthService struct {
+	userRepo *repository.UserRepo
+}
+
+func NewAuthService(userRepo *repository.UserRepo) *AuthService {
+	return &AuthService{userRepo: userRepo}
+}
+
+func (s *AuthService) Register(ctx context.Context, email, password string) (*types.AuthDTO, error) {
+	newUser := &models.User{
+		Email:    email,
+		Password: password,
+		Status:   1,
+	}
+	if err := s.userRepo.Create(ctx, newUser); err != nil {
+		return nil, err
+	}
+
+	tokenPair, err := jwt.GenerateTokenPair(newUser.ID)
+	if err != nil {
+		return nil, err
+	}
+
+	return &types.AuthDTO{
+		User:         toAuthUserDTO(newUser),
+		AccessToken:  tokenPair.AccessToken,
+		RefreshToken: tokenPair.RefreshToken,
+	}, nil
+}
+
+func (s *AuthService) Login(ctx context.Context, email, password string) (*types.AuthDTO, error) {
+	loginUser, err := s.userRepo.FindByEmail(ctx, email)
+	if err != nil {
+		return nil, err
+	}
+	if loginUser.Password != password {
+		return nil, fmt.Errorf("invalid password")
+	}
+
+	tokenPair, err := jwt.GenerateTokenPair(loginUser.ID)
+	if err != nil {
+		return nil, err
+	}
+
+	return &types.AuthDTO{
+		User:         toAuthUserDTO(loginUser),
+		AccessToken:  tokenPair.AccessToken,
+		RefreshToken: tokenPair.RefreshToken,
+	}, nil
+}
+
+func (s *AuthService) RefreshToken(_ context.Context, refreshToken string) (*types.AuthDTO, error) {
+	tokenPair, err := jwt.RefreshToken(refreshToken)
+	if err != nil {
+		return nil, err
+	}
+
+	return &types.AuthDTO{
+		AccessToken:  tokenPair.AccessToken,
+		RefreshToken: tokenPair.RefreshToken,
+	}, nil
+}
+
+func toAuthUserDTO(u *models.User) *types.AuthUserDTO {
+	return &types.AuthUserDTO{
+		ID:     u.ID,
+		Name:   u.Name,
+		Email:  u.Email,
+		Avatar: u.Avatar,
+		Role:   u.Role,
+	}
+}

@@ -1,0 +1,90 @@
+package service
+
+import (
+	"context"
+	"time"
+
+	"{{.ModuleName}}/repository"
+	"{{.ModuleName}}/types"
+	"{{.ModuleName}}/types/models"
+)
+
+type UserService struct {
+	repo *repository.UserRepo
+}
+
+func NewUserService(repo *repository.UserRepo) *UserService {
+	return &UserService{repo: repo}
+}
+
+func (s *UserService) Create(ctx context.Context, email, password, name string) (*types.UserDTO, error) {
+	item := &models.User{
+		Email:     email,
+		Password:  password,
+		Name:      name,
+		Status:    1,
+		CreatedAt: time.Now(),
+		UpdatedAt: time.Now(),
+	}
+
+	if err := s.repo.Create(ctx, item); err != nil {
+		return nil, err
+	}
+
+	return toUserDTO(item), nil
+}
+
+func (s *UserService) List(ctx context.Context, page, pageSize int) ([]types.UserDTO, int64, error) {
+	items, total, err := s.repo.FindAll(ctx, page, pageSize)
+	if err != nil {
+		return nil, 0, err
+	}
+
+	var dtos []types.UserDTO
+	for _, item := range items {
+		dtos = append(dtos, *toUserDTO(&item))
+	}
+
+	return dtos, total, nil
+}
+
+func (s *UserService) Get(ctx context.Context, id uint) (*types.UserDTO, error) {
+	item, err := s.repo.First(ctx, id)
+	if err != nil {
+		return nil, err
+	}
+
+	return toUserDTO(item), nil
+}
+
+func (s *UserService) Update(ctx context.Context, id uint, name, email string, status *int8) error {
+	updates := map[string]interface{}{
+		"updated_at": time.Now(),
+	}
+	if name != "" {
+		updates["name"] = name
+	}
+	if email != "" {
+		updates["email"] = email
+	}
+	if status != nil {
+		updates["status"] = *status
+	}
+
+	return s.repo.Update(ctx, id, updates)
+}
+
+func (s *UserService) Delete(ctx context.Context, id uint) error {
+	return s.repo.Delete(ctx, id)
+}
+
+func toUserDTO(item *models.User) *types.UserDTO {
+	return &types.UserDTO{
+		ID:        item.ID,
+		Email:     item.Email,
+		Name:      item.Name,
+		Status:    item.Status,
+		CreatedAt: item.CreatedAt,
+		UpdatedAt: item.UpdatedAt,
+	}
+}
