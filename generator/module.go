@@ -32,7 +32,7 @@ func CreateModule(moduleName, structName, projectModule string) error {
 	files := map[string]string{
 		"module.go.tmpl":     "module.go",
 		"model.go.tmpl":      "model.go",
-		"dto.go.tmpl":        "dto.go",
+		"types.go.tmpl":      "types.go",
 		"handler.go.tmpl":    "handler.go",
 		"service.go.tmpl":    "service.go",
 		"repo.go.tmpl":       "repo.go",

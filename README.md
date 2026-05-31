@@ -48,20 +48,20 @@ myproject/
 │   │   └── module.go
 │   ├── auth/                 # Authentication module
 │   │   ├── module.go
-│   │   ├── dto.go
+│   │   ├── types.go
 │   │   ├── handler.go
 │   │   └── service.go
 │   ├── user/                 # User module
 │   │   ├── module.go
 │   │   ├── model.go
-│   │   ├── dto.go
+│   │   ├── types.go
 │   │   ├── handler.go
 │   │   ├── service.go
 │   │   └── repo.go
 │   └── post/                 # Demo CRUD module
 │       ├── module.go
 │       ├── model.go
-│       ├── dto.go
+│       ├── types.go
 │       ├── handler.go
 │       ├── service.go
 │       └── repo.go

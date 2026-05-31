@@ -262,7 +262,7 @@ Edit each file in `generator/templates/module/user/`:
 - `service.go.tmpl` - Update imports
 - `repo.go.tmpl` - Update imports, rename repository references to repo
 - `model.go.tmpl` - Check for imports
-- `dto.go.tmpl` - Check for imports
+- `types.go.tmpl` - Check for imports
 
 **Step 2: Update auth module templates**
 
@@ -270,7 +270,7 @@ Edit each file in `generator/templates/module/auth/`:
 - `module.go.tmpl` - Update imports
 - `handler.go.tmpl` - Update imports
 - `service.go.tmpl` - Update imports
-- `dto.go.tmpl` - Check for imports
+- `types.go.tmpl` - Check for imports
 
 **Step 3: Update post module templates**
 
@@ -280,7 +280,7 @@ Edit each file in `generator/templates/module/post/`:
 - `service.go.tmpl` - Update imports
 - `repo.go.tmpl` - Update imports, rename repository references to repo
 - `model.go.tmpl` - Check for imports
-- `dto.go.tmpl` - Check for imports
+- `types.go.tmpl` - Check for imports
 
 **Step 4: Update contract template**
 
@@ -390,17 +390,17 @@ templates := map[string]string{
     "templates/shared/strutils/string.go.tmpl":   "internal/shared/strutils/string.go",
     "templates/module/user/module.go.tmpl":        "internal/modules/user/module.go",
     "templates/module/user/model.go.tmpl":         "internal/modules/user/model.go",
-    "templates/module/user/dto.go.tmpl":           "internal/modules/user/dto.go",
+    "templates/module/user/types.go.tmpl":           "internal/modules/user/types.go",
     "templates/module/user/handler.go.tmpl":       "internal/modules/user/handler.go",
     "templates/module/user/service.go.tmpl":       "internal/modules/user/service.go",
     "templates/module/user/repo.go.tmpl":          "internal/modules/user/repo.go",
     "templates/module/auth/module.go.tmpl":        "internal/modules/auth/module.go",
-    "templates/module/auth/dto.go.tmpl":           "internal/modules/auth/dto.go",
+    "templates/module/auth/types.go.tmpl":           "internal/modules/auth/types.go",
     "templates/module/auth/handler.go.tmpl":       "internal/modules/auth/handler.go",
     "templates/module/auth/service.go.tmpl":       "internal/modules/auth/service.go",
     "templates/module/post/module.go.tmpl":        "internal/modules/post/module.go",
     "templates/module/post/model.go.tmpl":         "internal/modules/post/model.go",
-    "templates/module/post/dto.go.tmpl":           "internal/modules/post/dto.go",
+    "templates/module/post/types.go.tmpl":           "internal/modules/post/types.go",
     "templates/module/post/handler.go.tmpl":       "internal/modules/post/handler.go",
     "templates/module/post/service.go.tmpl":       "internal/modules/post/service.go",
     "templates/module/post/repo.go.tmpl":          "internal/modules/post/repo.go",
@@ -558,20 +558,20 @@ myproject/
 │   │   │   └── user.go
 │   │   ├── auth/             # Authentication module
 │   │   │   ├── module.go
-│   │   │   ├── dto.go
+│   │   │   ├── types.go
 │   │   │   ├── handler.go
 │   │   │   └── service.go
 │   │   ├── user/             # User module
 │   │   │   ├── module.go
 │   │   │   ├── model.go
-│   │   │   ├── dto.go
+│   │   │   ├── types.go
 │   │   │   ├── handler.go
 │   │   │   ├── service.go
 │   │   │   └── repo.go
 │   │   └── post/             # Demo CRUD module
 │   │       ├── module.go
 │   │       ├── model.go
-│   │       ├── dto.go
+│   │       ├── types.go
 │   │       ├── handler.go
 │   │       ├── service.go
 │   │       └── repo.go

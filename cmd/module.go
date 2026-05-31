@@ -21,7 +21,7 @@ var moduleCmd = &cobra.Command{
 The module will be created in the 'modules/' directory with:
   - module.go     - Module initialization and route registration
   - model.go      - Database model
-  - dto.go        - Data transfer objects (request/response)
+  - types.go      - Data transfer objects (request/response)
   - handler.go    - HTTP handlers
   - service.go    - Business logic
   - repo.go       - Database operations
@@ -124,7 +124,7 @@ func printModuleSuccess(moduleName, projectModule string) {
 	fmt.Printf("   modules/%s/\n", moduleName)
 	fmt.Printf("   ├── module.go\n")
 	fmt.Printf("   ├── model.go\n")
-	fmt.Printf("   ├── dto.go\n")
+	fmt.Printf("   ├── types.go\n")
 	fmt.Printf("   ├── handler.go\n")
 	fmt.Printf("   ├── service.go\n")
 	fmt.Printf("   └── repo.go\n")

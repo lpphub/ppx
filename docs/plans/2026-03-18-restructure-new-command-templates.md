@@ -55,20 +55,20 @@ myproject/
 │   │   │   └── user.go
 │   │   ├── auth/
 │   │   │   ├── module.go
-│   │   │   ├── dto.go
+│   │   │   ├── types.go
 │   │   │   ├── handler.go
 │   │   │   └── service.go
 │   │   ├── user/
 │   │   │   ├── module.go
 │   │   │   ├── model.go
-│   │   │   ├── dto.go
+│   │   │   ├── types.go
 │   │   │   ├── handler.go
 │   │   │   ├── service.go
 │   │   │   └── repo.go
 │   │   └── post/
 │   │       ├── module.go
 │   │       ├── model.go
-│   │       ├── dto.go
+│   │       ├── types.go
 │   │       ├── handler.go
 │   │       ├── service.go
 │   │       └── repo.go
@@ -205,7 +205,7 @@ Update the `Long` description to show new project structure.
 | Decision | Choice |
 |----------|--------|
 | `config/` location | Keep at root level |
-| `dto.go` files | Keep in each module |
+| `types.go` files | Keep in each module |
 | New platform dirs (`cache/`, `queue/`, `logger/`) | Skip (not created) |
 | `contract/` location | Move to `internal/modules/contract/` |
 | `pkg/` directory | Skip (not created) |
