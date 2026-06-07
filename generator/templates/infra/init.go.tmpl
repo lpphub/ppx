@@ -3,7 +3,8 @@ package infra
 import (
 	"fmt"
 
-	"github.com/lpphub/goweb/pkg/logging"
+	"github.com/lpphub/gost/logger"
+	"github.com/lpphub/gost/otel"
 	"github.com/redis/go-redis/v9"
 	"gorm.io/gorm"
 )
@@ -32,7 +33,15 @@ func Init() error {
 		return fmt.Errorf("failed to connect to redis: %w", err)
 	}
 
-	logging.Init()
+	logger.Init()
+
+	// 初始化 OpenTelemetry（traces + metrics）
+	if err := otel.Init(
+		otel.WithServiceName("{{.ProjectName}}"),
+		otel.WithTracesEnabled(true),
+	); err != nil {
+		return fmt.Errorf("failed to init otel: %w", err)
+	}
 
 	return nil
 }

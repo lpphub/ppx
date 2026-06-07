@@ -5,7 +5,8 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/lpphub/goweb/ext/logx"
+	"github.com/lpphub/gost/contrib/logx"
+	"github.com/lpphub/gost/contrib/otelx"
 	"github.com/redis/go-redis/v9"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
@@ -28,6 +29,7 @@ func NewMysqlDB(cfg DBConfig) (*gorm.DB, error) {
 	pool.SetConnMaxIdleTime(5 * time.Minute)
 	pool.SetConnMaxLifetime(30 * time.Minute)
 
+	db = otelx.WrapDB(db)
 	return db, nil
 }
 
@@ -48,5 +50,6 @@ func NewRedis(cfg RedisConfig) (*redis.Client, error) {
 
 	rdb.AddHook(logx.NewRedisLogger())
 
+	rdb = otelx.WrapRDB(rdb)
 	return rdb, nil
 }

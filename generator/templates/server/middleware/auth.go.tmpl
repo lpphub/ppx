@@ -8,7 +8,7 @@ import (
 	"{{.ModuleName}}/shared/errs"
 
 	"github.com/gin-gonic/gin"
-	"github.com/lpphub/goweb/base"
+	"github.com/lpphub/gost/httpx"
 )
 
 const (
@@ -21,7 +21,7 @@ func JwtAuth() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		authHeader := c.GetHeader(AuthorizationHeader)
 		if authHeader == "" {
-			base.Fail(c, errs.ErrNoToken)
+			httpx.Fail(c, errs.ErrNoToken)
 			c.Abort()
 			return
 		}
@@ -33,7 +33,7 @@ func JwtAuth() gin.HandlerFunc {
 
 		claims, err := jwt.ParseAccessToken(parts[1])
 		if err != nil {
-			base.Fail(c, errs.ErrInvalidToken)
+			httpx.Fail(c, errs.ErrInvalidToken)
 			c.Abort()
 			return
 		}

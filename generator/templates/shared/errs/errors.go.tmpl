@@ -3,21 +3,21 @@ package errs
 import (
 	"net/http"
 
-	"github.com/lpphub/goweb/base"
+	"github.com/lpphub/gost/httpx"
 )
 
 var (
-	ErrServerError = base.NewErrorWithStatus(500, "server internal error", http.StatusInternalServerError)
+	ErrServerError = httpx.NewErrorWithStatus(500, "server internal error", http.StatusInternalServerError)
 
-	ErrNoToken      = base.NewErrorWithStatus(1000, "no token", http.StatusUnauthorized)
-	ErrInvalidToken = base.NewErrorWithStatus(1001, "invalid token", http.StatusUnauthorized)
-	ErrInvalidParam = base.NewError(1100, "invalid param")
+	ErrNoToken      = httpx.NewErrorWithStatus(1000, "no token", http.StatusUnauthorized)
+	ErrInvalidToken = httpx.NewErrorWithStatus(1001, "invalid token", http.StatusUnauthorized)
+	ErrInvalidParam = httpx.NewError(1100, "invalid param")
 
-	ErrUserExists      = base.NewError(2101, "user already exists")
-	ErrUserNotFound    = base.NewError(2102, "user not found")
-	ErrInvalidPassword = base.NewError(2103, "invalid password")
-	ErrLoginFailed     = base.NewError(2104, "login failed")
-	ErrUserDisabled    = base.NewError(2105, "user is disabled")
+	ErrUserExists      = httpx.NewError(2101, "user already exists")
+	ErrUserNotFound    = httpx.NewError(2102, "user not found")
+	ErrInvalidPassword = httpx.NewError(2103, "invalid password")
+	ErrLoginFailed     = httpx.NewError(2104, "login failed")
+	ErrUserDisabled    = httpx.NewError(2105, "user is disabled")
 
-	ErrPostNotFound = base.NewError(2201, "post not found")
+	ErrPostNotFound = httpx.NewError(2201, "post not found")
 )
